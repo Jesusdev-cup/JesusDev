@@ -21,6 +21,11 @@ const items = [
     href: getRelativeLocaleUrl(lang, 'yohacase'),
     group: t('cmdk.nav'),
   },
+  {
+    label: t('cmdk.docs'),
+    href: getRelativeLocaleUrl(lang, 'docs'),
+    group: t('cmdk.nav'),
+  },
   ...projects.map((p) => ({
     label: p.name,
     href: getRelativeLocaleUrl(lang, `work/${p.name}`),

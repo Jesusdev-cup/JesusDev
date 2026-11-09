@@ -1,0 +1,9 @@
+---
+import DocsPage from '../../components/DocsPage.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+const docs = await getCollection('docs', ({ id }) => id.startsWith('es/'));
+const entry = await getEntry('docs', 'es/introduccion');
+---
+
+<DocsPage lang="es" entry={entry!} docs={docs} />

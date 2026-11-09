@@ -62,6 +62,9 @@ const toc = [
 
         <nav class="yh-toc reveal" aria-label="Index">
           {toc.map((item) => <a href={`#${item.id}`}>{item.label}</a>)}
+          <a class="yh-docs-link" href={getRelativeLocaleUrl(lang, 'docs')}>
+            {t('yh.docs')}
+          </a>
         </nav>
       </div>
     </section>

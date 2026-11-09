@@ -73,8 +73,10 @@ export const ui = {
     'contact.wa.msg':
       'Hola Jesús, vi tu portfolio y me gustaría hablar contigo sobre un proyecto.',
     'cmdk.hint': 'Ctrl K',
+    'cmdk.docs': 'Documentación yohacase',
     'theme.toggle': 'Cambiar tema',
     'nav.method': 'Método',
+    'yh.docs': 'Documentación completa →',
     'idx.title': 'Índice',
     'idx.about': 'Quién soy y en qué me especializo.',
     'idx.experience': 'Dónde he trabajado y qué he construido.',
@@ -204,8 +206,10 @@ export const ui = {
     'contact.wa.msg':
       "Hi Jesús, I saw your portfolio and I'd like to talk about a project.",
     'cmdk.hint': 'Ctrl K',
+    'cmdk.docs': 'yohacase documentation',
     'theme.toggle': 'Toggle theme',
     'nav.method': 'Method',
+    'yh.docs': 'Full documentation →',
     'idx.title': 'Index',
     'idx.about': 'Who I am and what I specialize in.',
     'idx.experience': "Where I've worked and what I've built.",

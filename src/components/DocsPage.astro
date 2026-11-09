@@ -1,0 +1,63 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { render, type CollectionEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Nav from './Nav.astro';
+import Footer from './Footer.astro';
+import { docsGroups } from '../data/docsNav';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  entry: CollectionEntry<'docs'>;
+  docs: CollectionEntry<'docs'>[];
+}
+
+const { lang, entry, docs } = Astro.props;
+const { Content } = await render(entry);
+
+const prefix = lang === 'en' ? 'en/' : 'es/';
+const slugOf = (e: CollectionEntry<'docs'>) => e.id.slice(prefix.length);
+const current = slugOf(entry);
+const title = `${entry.data.title} — yohacase`;
+---
+
+<Base lang={lang} title={title} description={entry.data.description}>
+  <Nav lang={lang} />
+  <main class="docs" id="content" transition:animate="fade">
+    <div class="container docs-grid">
+      <aside class="docs-side">
+        {docsGroups.map((g) => (
+          <nav class="docs-group" aria-label={g.label[lang]}>
+            <p class="docs-group-label">{g.label[lang]}</p>
+            <ul>
+              {g.slugs.map((s) => {
+                const d = docs.find((e) => slugOf(e) === s);
+                if (!d) return null;
+                const active = current === s;
+                return (
+                  <li>
+                    <a
+                      href={getRelativeLocaleUrl(lang, `docs/${s}`)}
+                      class={active ? 'active' : ''}
+                      aria-current={active ? 'page' : undefined}
+                    >
+                      {d.data.sidebar ?? d.data.title}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+        ))}
+      </aside>
+      <article class="docs-article">
+        <p class="docs-crumb">~/docs/{current}</p>
+        <h1>{entry.data.title}</h1>
+        <p class="docs-lede">{entry.data.description}</p>
+        <Content />
+      </article>
+    </div>
+  </main>
+  <Footer lang={lang} />
+</Base>
