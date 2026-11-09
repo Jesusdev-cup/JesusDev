@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from './Nav.astro';
+import CtaBanner from './CtaBanner.astro';
+import Footer from './Footer.astro';
+import CommandPalette from './CommandPalette.astro';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  cta?: boolean;
+}
+
+const { lang, title, description, cta = true } = Astro.props;
+---
+
+<Base lang={lang} title={title} description={description}>
+  <Nav lang={lang} />
+  <main id="content" transition:animate="fade">
+    <slot />
+    {cta && <CtaBanner lang={lang} />}
+  </main>
+  <Footer lang={lang} />
+  <CommandPalette lang={lang} />
+</Base>

@@ -1,16 +1,14 @@
 ---
+import { getRelativeLocaleUrl } from 'astro:i18n';
 import Base from '../layouts/Base.astro';
 import Nav from './Nav.astro';
 import Hero from './Hero.astro';
-import About from './About.astro';
-import Experience from './Experience.astro';
-import Projects from './Projects.astro';
-import Repos from './Repos.astro';
-import Skills from './Skills.astro';
-import Contact from './Contact.astro';
+import TrustStrip from './TrustStrip.astro';
+import Services from './Services.astro';
+import CtaBanner from './CtaBanner.astro';
 import Footer from './Footer.astro';
 import CommandPalette from './CommandPalette.astro';
-import { useTranslations, type Lang } from '../i18n/ui';
+import { useTranslations, type Lang, type UIKey } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
@@ -18,18 +16,39 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+
+const indexLinks: { route: string; key: UIKey; descKey: UIKey }[] = [
+  { route: 'about', key: 'nav.about', descKey: 'idx.about' },
+  { route: 'experience', key: 'nav.experience', descKey: 'idx.experience' },
+  { route: 'projects', key: 'nav.projects', descKey: 'idx.projects' },
+  { route: 'skills', key: 'nav.skills', descKey: 'idx.skills' },
+  { route: 'contact', key: 'nav.contact', descKey: 'idx.contact' },
+  { route: 'yohacase', key: 'nav.method', descKey: 'idx.method' },
+];
 ---
 
 <Base lang={lang} title={t('site.title')} description={t('site.description')}>
   <Nav lang={lang} />
-  <main>
+  <main id="content" transition:animate="fade">
     <Hero lang={lang} />
-    <About lang={lang} />
-    <Experience lang={lang} />
-    <Projects lang={lang} />
-    <Repos lang={lang} />
-    <Skills lang={lang} />
-    <Contact lang={lang} />
+    <TrustStrip lang={lang} />
+    <Services lang={lang} />
+    <section id="index">
+      <div class="container">
+        <h2 class="section-title reveal">{t('idx.title')}</h2>
+        <div class="home-index">
+          {indexLinks.map((l) => (
+            <a class="index-card reveal" href={getRelativeLocaleUrl(lang, l.route)}>
+              <span class="idx-path">~/{l.route}</span>
+              <h3>{t(l.key)}</h3>
+              <p>{t(l.descKey)}</p>
+              <span class="idx-arrow" aria-hidden="true">→</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+    <CtaBanner lang={lang} />
   </main>
   <Footer lang={lang} />
   <CommandPalette lang={lang} />

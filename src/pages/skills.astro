@@ -1,0 +1,15 @@
+---
+import Page from '../components/Page.astro';
+import Skills from '../components/Skills.astro';
+import { useTranslations } from '../i18n/ui';
+
+const t = useTranslations('es');
+---
+
+<Page
+  lang="es"
+  title={`${t('nav.skills')} — Jesús Gabriel Cupello`}
+  description={t('skills.subtitle')}
+>
+  <Skills lang="es" />
+</Page>

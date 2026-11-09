@@ -1,0 +1,17 @@
+---
+import Page from '../components/Page.astro';
+import Projects from '../components/Projects.astro';
+import Repos from '../components/Repos.astro';
+import { useTranslations } from '../i18n/ui';
+
+const t = useTranslations('es');
+---
+
+<Page
+  lang="es"
+  title={`${t('nav.projects')} — Jesús Gabriel Cupello`}
+  description={t('projects.subtitle')}
+>
+  <Projects lang="es" />
+  <Repos lang="es" />
+</Page>

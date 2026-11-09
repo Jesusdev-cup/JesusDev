@@ -5,13 +5,17 @@ import Nav from './Nav.astro';
 import Footer from './Footer.astro';
 import {
   pillars,
+  stackLayers,
+  moduleOwns,
+  moduleTree,
   principles,
   phases,
   influences,
   antipatterns,
   antipatternText,
+  checklist,
+  applied,
 } from '../data/yohacase';
-import { projects } from '../data/projects';
 import { useTranslations, type Lang } from '../i18n/ui';
 
 interface Props {
@@ -24,23 +28,27 @@ const title = `yohacase — ${t('site.title')}`;
 
 const toc = [
   { id: 'pillars', label: t('yh.pillars') },
+  { id: 'stack', label: t('yh.stack') },
+  { id: 'anatomy', label: t('yh.anatomy') },
   { id: 'principles', label: t('yh.principles') },
   { id: 'pipeline', label: t('yh.pipeline') },
   { id: 'dna', label: t('yh.dna') },
   { id: 'antipatterns', label: t('yh.anti') },
+  { id: 'checklist', label: t('yh.checklist') },
   { id: 'applied', label: t('yh.applied') },
 ];
 ---
 
 <Base lang={lang} title={title} description={t('yh.intro')}>
   <Nav lang={lang} />
-  <main class="yh">
+  <main class="yh" id="content" transition:animate="fade">
     <section class="yh-hero">
       <div class="container">
         <p class="hero-greeting reveal">{t('yh.kicker')}</p>
         <h1 class="yh-title reveal">yohacase<span class="yh-caret">_</span></h1>
         <p class="yh-tagline reveal">{t('yh.tagline')}</p>
         <p class="yh-intro reveal">{t('yh.intro')}</p>
+        <p class="yh-origin reveal">{t('yh.origin')}</p>
 
         <div class="yh-formula reveal" aria-hidden="true">
           <div class="yh-fbox">stack</div>
@@ -76,6 +84,57 @@ const toc = [
       </div>
     </section>
 
+    <section class="yh-section" id="stack">
+      <div class="container">
+        <h2 class="section-title reveal">{t('yh.stack')}</h2>
+        <p class="section-sub reveal">{t('yh.stack.sub')}</p>
+        <div class="yh-stack-wrap reveal">
+          <table class="yh-stack">
+            <thead>
+              <tr>
+                <th>{t('yh.stack.layer')}</th>
+                <th>{t('yh.stack.tools')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {stackLayers.map((row) => (
+                <tr>
+                  <td class="yh-stack-layer">{row.layer[lang]}</td>
+                  <td>{row.tools[lang]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="yh-section" id="anatomy">
+      <div class="container">
+        <h2 class="section-title reveal">{t('yh.anatomy')}</h2>
+        <p class="section-sub reveal">{t('yh.anatomy.sub')}</p>
+        <div class="yh-anatomy">
+          <div class="yh-owns">
+            {moduleOwns.map((m) => (
+              <div class="yh-own reveal">
+                <h3>{m.title[lang]}</h3>
+                <p>{m.desc[lang]}</p>
+              </div>
+            ))}
+          </div>
+          <div class="terminal yh-tree-term reveal">
+            <div class="terminal-bar">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="terminal-title">tree — arc-&lt;product&gt;</span>
+            </div>
+            <pre class="yh-tree">{moduleTree}</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="yh-section" id="principles">
       <div class="container">
         <h2 class="section-title reveal">{t('yh.principles')}</h2>
@@ -102,6 +161,10 @@ const toc = [
               <span class="yh-step">{String(i + 1).padStart(2, '0')}</span>
               <h3>{ph.name[lang]}</h3>
               <p>{ph.desc[lang]}</p>
+              <p class="yh-deliv">
+                <span class="yh-deliv-lbl">{t('yh.deliverable')}</span>
+                {ph.deliverable[lang]}
+              </p>
             </li>
           ))}
         </ol>
@@ -139,16 +202,72 @@ const toc = [
       </div>
     </section>
 
+    <section class="yh-section" id="checklist">
+      <div class="container">
+        <h2 class="section-title reveal">{t('yh.checklist')}</h2>
+        <p class="section-sub reveal">{t('yh.checklist.sub')}</p>
+        <ol class="yh-check">
+          {checklist.map((q, i) => (
+            <li class="yh-check-item reveal">
+              <span class="yh-check-num">{String(i + 1).padStart(2, '0')}</span>
+              <span>{q[lang]}</span>
+            </li>
+          ))}
+        </ol>
+        <p class="yh-check-ok reveal">{t('yh.checklist.ok')}</p>
+      </div>
+    </section>
+
     <section class="yh-section" id="applied">
       <div class="container">
         <h2 class="section-title reveal">{t('yh.applied')}</h2>
-        <div class="yh-applied reveal">
-          {projects.map((p) => (
-            <a class="tag yh-chip" href={getRelativeLocaleUrl(lang, `work/${p.name}`)}>{p.name}</a>
+        <ul class="yh-applied-list">
+          {applied.map((a) => (
+            <li class="yh-applied-item reveal">
+              <a class="yh-applied-name" href={getRelativeLocaleUrl(lang, `work/${a.name}`)}>
+                {a.name}
+              </a>
+              <p>{a.desc[lang]}</p>
+            </li>
           ))}
+        </ul>
+
+        <div class="yh-cta reveal">
+          <h3>{t('yh.cta.title')}</h3>
+          <p>{t('yh.cta.text')}</p>
+          <a class="btn btn-primary" href={getRelativeLocaleUrl(lang, 'contact')}>
+            {t('yh.cta.btn')}
+          </a>
         </div>
       </div>
     </section>
   </main>
   <Footer lang={lang} />
 </Base>
+
+<script>
+  function initScrollSpy() {
+    const links = document.querySelectorAll<HTMLAnchorElement>('.yh-toc a');
+    if (!links.length) return;
+    const sections = [...links]
+      .map((a) => document.getElementById((a.getAttribute('href') ?? '').slice(1)))
+      .filter((s): s is HTMLElement => s !== null);
+    if (!sections.length) return;
+
+    const spy = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          links.forEach((l) =>
+            l.classList.toggle('active', l.getAttribute('href') === `#${entry.target.id}`)
+          );
+        }
+      },
+      { rootMargin: '-15% 0px -75% 0px' }
+    );
+    sections.forEach((s) => spy.observe(s));
+  }
+
+  initScrollSpy();
+  document.addEventListener('astro:page-load', initScrollSpy);
+</script>

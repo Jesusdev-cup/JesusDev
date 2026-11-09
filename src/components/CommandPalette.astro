@@ -9,12 +9,11 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
-const homeUrl = getRelativeLocaleUrl(lang);
 
 const items = [
   ...(['about', 'experience', 'projects', 'skills', 'contact'] as const).map((a) => ({
     label: t(`nav.${a}`),
-    href: `${homeUrl}#${a}`,
+    href: getRelativeLocaleUrl(lang, a),
     group: t('cmdk.nav'),
   })),
   {
@@ -35,6 +34,11 @@ const items = [
   {
     label: 'GitHub ↗',
     href: 'https://github.com/Jesusdev-cup',
+    group: t('cmdk.actions'),
+  },
+  {
+    label: 'LinkedIn ↗',
+    href: 'https://www.linkedin.com/in/gabriel-cupello-904301330/',
     group: t('cmdk.actions'),
   },
   {

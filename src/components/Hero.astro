@@ -1,4 +1,5 @@
 ---
+import { getRelativeLocaleUrl } from 'astro:i18n';
 import { useTranslations, type Lang } from '../i18n/ui';
 
 interface Props {
@@ -17,8 +18,8 @@ const t = useTranslations(lang);
       <p class="hero-role">{t('hero.role')}</p>
       <p class="hero-tagline">{t('hero.tagline')}</p>
       <div class="hero-ctas">
-        <a class="btn btn-primary" href="#projects">{t('hero.cta.projects')}</a>
-        <a class="btn btn-ghost" href="#contact">{t('hero.cta.contact')}</a>
+        <a class="btn btn-primary" href={getRelativeLocaleUrl(lang, 'projects')}>{t('hero.cta.projects')}</a>
+        <a class="btn btn-ghost" href={getRelativeLocaleUrl(lang, 'contact')}>{t('hero.cta.contact')}</a>
       </div>
       <p class="hero-status"><span class="dot"></span>{t('hero.status')}</p>
     </div>

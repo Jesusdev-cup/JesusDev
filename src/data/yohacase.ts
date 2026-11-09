@@ -15,7 +15,96 @@ export interface Principle {
 export interface Phase {
   name: Record<Lang, string>;
   desc: Record<Lang, string>;
+  deliverable: Record<Lang, string>;
 }
+
+export interface StackLayer {
+  layer: Record<Lang, string>;
+  tools: Record<Lang, string>;
+}
+
+export const stackLayers: StackLayer[] = [
+  {
+    layer: { es: 'Backend / CMS', en: 'Backend / CMS' },
+    tools: { es: 'WordPress · PHP 8 · REST API', en: 'WordPress · PHP 8 · REST API' },
+  },
+  {
+    layer: { es: 'Front-end', en: 'Front-end' },
+    tools: { es: 'Vanilla JS · React · Tailwind', en: 'Vanilla JS · React · Tailwind' },
+  },
+  {
+    layer: { es: 'Datos', en: 'Data' },
+    tools: {
+      es: 'MySQL · SQLite · Supabase · PocketBase',
+      en: 'MySQL · SQLite · Supabase · PocketBase',
+    },
+  },
+  {
+    layer: { es: 'Extensión', en: 'Extension' },
+    tools: { es: 'Chrome MV3 · service workers', en: 'Chrome MV3 · service workers' },
+  },
+  {
+    layer: { es: 'Sitios', en: 'Sites' },
+    tools: { es: 'Astro (static output)', en: 'Astro (static output)' },
+  },
+  {
+    layer: { es: 'Diseño', en: 'Design' },
+    tools: {
+      es: 'Karibase (design system propio)',
+      en: 'Karibase (in-house design system)',
+    },
+  },
+  {
+    layer: { es: 'Automatización', en: 'Automation' },
+    tools: { es: 'n8n · Make · Google Apps Script', en: 'n8n · Make · Google Apps Script' },
+  },
+];
+
+export interface ModulePart {
+  title: Record<Lang, string>;
+  desc: Record<Lang, string>;
+}
+
+export const moduleOwns: ModulePart[] = [
+  {
+    title: { es: 'Sus datos', en: 'Its data' },
+    desc: {
+      es: 'Cada módulo posee su tabla — o las tablas que le tocan. Ningún otro módulo las escribe.',
+      en: 'Each module owns its table — or the tables it touches. No other module writes to them.',
+    },
+  },
+  {
+    title: { es: 'Su versión de schema', en: 'Its schema version' },
+    desc: {
+      es: 'Estampa su versión (ej. schema 2.9.38) y migra sola. Nada de bases en estado desconocido.',
+      en: 'It stamps its version (e.g. schema 2.9.38) and migrates itself. No databases in unknown state.',
+    },
+  },
+  {
+    title: { es: 'Sus rutas', en: 'Its routes' },
+    desc: {
+      es: 'Rutas REST propias, con contrato explícito y sus propios permisos.',
+      en: 'Its own REST routes, with an explicit contract and its own permissions.',
+    },
+  },
+  {
+    title: { es: 'Sus límites', en: 'Its boundaries' },
+    desc: {
+      es: 'Un módulo nunca entra en el dominio de otro: se comunican por funciones públicas o por hooks.',
+      en: 'A module never enters another module\u2019s domain: they communicate through public functions or hooks.',
+    },
+  },
+];
+
+export const moduleTree = `arc-<product>/
+├── includes/
+│   ├── class-<domain>.php        # one file, one domain
+│   ├── class-schema.php          # stamps its version, migrates itself
+│   └── helpers.php               # shared pieces live once
+├── api/
+│   └── class-rest-<domain>.php   # routes with an explicit contract
+├── assets/
+└── module.php                    # wires everything through hooks`;
 
 export const pillars: Pillar[] = [
   {
@@ -99,12 +188,20 @@ export const phases: Phase[] = [
       es: 'Entender el dominio antes de escribir código: actores, datos, flujos y reglas de negocio.',
       en: 'Understand the domain before writing code: actors, data, flows and business rules.',
     },
+    deliverable: {
+      es: 'Mapa de módulos y contratos',
+      en: 'Module map and contracts',
+    },
   },
   {
     name: { es: 'Contratar', en: 'Contract' },
     desc: {
       es: 'Definir rutas, schema y errores — el contrato que UI y clientes van a consumir.',
       en: 'Define routes, schema and errors — the contract that UI and clients will consume.',
+    },
+    deliverable: {
+      es: 'El contrato, antes de la UI',
+      en: 'The contract, before the UI',
     },
   },
   {
@@ -113,12 +210,20 @@ export const phases: Phase[] = [
       es: 'Módulos de dominio + componentes compartidos sobre el stack fijo. Nada se construye dos veces.',
       en: 'Domain modules + shared components on the fixed stack. Nothing gets built twice.',
     },
+    deliverable: {
+      es: 'Código que no se repite',
+      en: 'Code that does not repeat',
+    },
   },
   {
     name: { es: 'Verificar', en: 'Verify' },
     desc: {
       es: 'Suites QA end-to-end en entorno de test: permisos, flujos, errores — con asserts, no a ojo.',
       en: 'End-to-end QA suites on a test environment: permissions, flows, errors — with asserts, not eyeballs.',
+    },
+    deliverable: {
+      es: 'Asserts verdes, no "parece que funciona"',
+      en: 'Green asserts, not "seems to work"',
     },
   },
   {
@@ -127,12 +232,20 @@ export const phases: Phase[] = [
       es: 'Del árbol canónico a dev, a test y solo entonces a producción. Cada paso es reversible.',
       en: 'From the canonical tree to dev, to test, and only then to production. Every step is reversible.',
     },
+    deliverable: {
+      es: 'Cada paso reversible',
+      en: 'Every step reversible',
+    },
   },
   {
     name: { es: 'Observar', en: 'Observe' },
     desc: {
       es: 'Diagnósticos, health de crons y audit logs dentro del producto — el sistema se explica solo.',
       en: 'Diagnostics, cron health and audit logs inside the product — the system explains itself.',
+    },
+    deliverable: {
+      es: 'El sistema se explica solo',
+      en: 'The system explains itself',
     },
   },
 ];
@@ -297,3 +410,84 @@ export const antipatternText: Record<string, Record<Lang, { title: string; desc:
     },
   },
 };
+
+export const checklist: Record<Lang, string>[] = [
+  {
+    es: '¿Identifiqué los dominios y qué datos posee cada uno?',
+    en: 'Did I identify the domains and what data each one owns?',
+  },
+  {
+    es: '¿El contrato REST + schema existe antes de escribir la UI?',
+    en: 'Does the REST contract + schema exist before the UI gets written?',
+  },
+  {
+    es: '¿Cada regla de negocio vive en un solo lugar?',
+    en: 'Does every business rule live in a single place?',
+  },
+  {
+    es: '¿Toda mutación acepta request_id y tiene rate limit?',
+    en: 'Does every mutation accept a request_id and is it rate-limited?',
+  },
+  {
+    es: '¿Hay una suite QA que corre en test antes de prod?',
+    en: 'Is there a QA suite that runs on test before prod?',
+  },
+  {
+    es: '¿El release se puede apagar sin desplegar?',
+    en: 'Can the release be turned off without a deploy?',
+  },
+  {
+    es: '¿Diagnósticos y audit logs incluidos desde el día uno?',
+    en: 'Are diagnostics and audit logs included from day one?',
+  },
+];
+
+export interface AppliedProject {
+  name: string;
+  desc: Record<Lang, string>;
+}
+
+export const applied: AppliedProject[] = [
+  {
+    name: 'arc-intranet',
+    desc: {
+      es: 'Módulos por dominio (google, permissions, onboarding), matriz de permisos como fuente única y diagnósticos integrados.',
+      en: 'Domain modules (google, permissions, onboarding), permission matrix as the single source and built-in diagnostics.',
+    },
+  },
+  {
+    name: 'arc-time-clock',
+    desc: {
+      es: 'API idempotente con request_id, rate limiting, drafts por día y suite E2E.',
+      en: 'Idempotent API with request_id, rate limiting, per-day drafts and an E2E suite.',
+    },
+  },
+  {
+    name: 'arc-time-clock-extension',
+    desc: {
+      es: 'MV3 con permisos mínimos, cola offline con dedup y cero login extra — reutiliza la sesión del portal.',
+      en: 'MV3 with minimal permissions, offline queue with dedup and no extra login — it reuses the portal session.',
+    },
+  },
+  {
+    name: 'arc-starter-templates',
+    desc: {
+      es: 'Payload remoto on-demand, wizard con dry-run y reset — reversible por diseño.',
+      en: 'Remote on-demand payload, wizard with dry-run and reset — reversible by design.',
+    },
+  },
+  {
+    name: 'karibase',
+    desc: {
+      es: 'El componente compartido por excelencia: design system + plugins JS reutilizables en cualquier proyecto.',
+      en: 'The shared component par excellence: a design system + JS plugins reusable in any project.',
+    },
+  },
+  {
+    name: 'lienzo-astra',
+    desc: {
+      es: 'Convención sobre configuración en forma de tema: todo se ajusta desde el Customizer, nada hardcodeado.',
+      en: 'Convention over configuration as a theme: everything is tuned from the Customizer, nothing hardcoded.',
+    },
+  },
+];

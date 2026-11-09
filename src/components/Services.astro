@@ -1,0 +1,27 @@
+---
+import { services } from '../data/services';
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id="services">
+  <div class="container">
+    <h2 class="section-title reveal">{t('srv.title')}</h2>
+    <p class="section-sub reveal">{t('srv.sub')}</p>
+    <div class="srv-grid">
+      {services.map((s, i) => (
+        <div class="srv reveal">
+          <span class="srv-num">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{s.title[lang]}</h3>
+          <p>{s.desc[lang]}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

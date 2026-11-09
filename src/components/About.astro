@@ -1,4 +1,5 @@
 ---
+import { getRelativeLocaleUrl } from 'astro:i18n';
 import { useTranslations, type Lang } from '../i18n/ui';
 
 interface Props {
@@ -9,10 +10,10 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 
 const stats = [
-  { num: '3+', label: t('about.stat.years') },
-  { num: '4', label: t('about.stat.plugins') },
-  { num: '1', label: t('about.stat.extension') },
-  { num: '1', label: t('about.stat.theme') },
+  { num: 3, suffix: '+', label: t('about.stat.years') },
+  { num: 4, suffix: '', label: t('about.stat.plugins') },
+  { num: 1, suffix: '', label: t('about.stat.extension') },
+  { num: 1, suffix: '', label: t('about.stat.theme') },
 ];
 ---
 
@@ -26,7 +27,7 @@ const stats = [
     <div class="stats reveal">
       {stats.map((s) => (
         <div class="stat">
-          <div class="num">{s.num}</div>
+          <div class="num" data-num={s.num} data-suffix={s.suffix}>{s.num}{s.suffix}</div>
           <div class="lbl">{s.label}</div>
         </div>
       ))}
@@ -41,5 +42,14 @@ const stats = [
         <p>{t('about.lang.text')}</p>
       </div>
     </div>
+    <a
+      class="index-card method-card reveal"
+      href={getRelativeLocaleUrl(lang, 'yohacase')}
+    >
+      <span class="idx-path">~/method/yohacase</span>
+      <h3>{t('about.method.title')}</h3>
+      <p>{t('about.method.text')}</p>
+      <span class="idx-arrow" aria-hidden="true">→</span>
+    </a>
   </div>
 </section>

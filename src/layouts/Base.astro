@@ -33,7 +33,10 @@ const jsonLd = {
     addressRegion: 'Lara',
     addressCountry: 'VE',
   },
-  sameAs: ['https://github.com/Jesusdev-cup'],
+  sameAs: [
+    'https://github.com/Jesusdev-cup',
+    'https://www.linkedin.com/in/gabriel-cupello-904301330/',
+  ],
   knowsAbout: ['PHP', 'JavaScript', 'React', 'WordPress', 'REST APIs', 'Automation'],
 };
 ---
@@ -64,6 +67,19 @@ const jsonLd = {
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <ClientRouter />
     <script is:inline define:vars={{ base }}>
+      // Theme: stored choice wins; otherwise follow OS preference.
+      // Runs before paint to avoid a flash of the wrong theme.
+      (() => {
+        try {
+          const theme = localStorage.getItem('jg-theme');
+          if (theme === 'light' || theme === 'dark') {
+            document.documentElement.dataset.theme = theme;
+          } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+            document.documentElement.dataset.theme = 'light';
+          }
+        } catch {}
+      })();
+
       // Language auto-detect: first visit to "/" redirects EN browsers to /en/.
       // A stored choice (lang toggle click) always wins.
       (() => {
@@ -89,14 +105,57 @@ const jsonLd = {
     )}
   </head>
   <body data-auto-seo>
-    <a class="skip-link" href="#about">Skip to content</a>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
     <slot />
     <button id="back-top" class="back-top" aria-label="Back to top">↑</button>
     <script>
       let scrollBound = false;
+      let spotBound = false;
+      let protectBound = false;
 
       function init() {
-        // Scroll reveal
+        // Copy/inspect deterrents — bound once per session
+        if (!protectBound) {
+          protectBound = true;
+
+          document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+          document.addEventListener('copy', (e) => {
+            if ((e.target as HTMLElement).closest('input, textarea')) return;
+            e.preventDefault();
+          });
+
+          document.addEventListener('dragstart', (e) => {
+            if (!(e.target as HTMLElement).closest('input, textarea')) {
+              e.preventDefault();
+            }
+          });
+
+          document.addEventListener('keydown', (e) => {
+            const k = e.key.toLowerCase();
+            const mod = e.ctrlKey || e.metaKey;
+            if (
+              e.key === 'F12' ||
+              (mod && e.shiftKey && ['i', 'j', 'c'].includes(k)) ||
+              (mod && !e.shiftKey && ['u', 's'].includes(k))
+            ) {
+              e.preventDefault();
+            }
+          });
+
+          // A wink for whoever opens the console anyway
+          console.log(
+            '%c$ whoami',
+            'color:#3fb950;font-family:monospace;font-size:12px'
+          );
+          console.log(
+            '%ccurious-dev — el código público está en github.com/Jesusdev-cup; el método se explica en /yohacase',
+            'color:#8b98a9;font-family:monospace;font-size:12px'
+          );
+        }
+
+        // Scroll reveal — with staggered delay between siblings
         const observer = new IntersectionObserver(
           (entries) => {
             for (const entry of entries) {
@@ -109,8 +168,47 @@ const jsonLd = {
           { threshold: 0.12 }
         );
         document
-          .querySelectorAll('.reveal:not(.visible)')
-          .forEach((el) => observer.observe(el));
+          .querySelectorAll<HTMLElement>('.reveal:not(.visible)')
+          .forEach((el) => {
+            const siblings = [...el.parentElement!.children].filter((c) =>
+              c.classList.contains('reveal')
+            );
+            const i = siblings.indexOf(el);
+            el.style.transitionDelay = `${Math.min(i * 70, 420)}ms`;
+            observer.observe(el);
+          });
+
+        // Animated counters (.stat .num with data-num / data-suffix)
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const counters = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              counters.unobserve(entry.target);
+              const el = entry.target as HTMLElement;
+              const target = parseInt(el.dataset.num ?? '', 10);
+              const suffix = el.dataset.suffix ?? '';
+              if (isNaN(target)) continue;
+              if (reduced) {
+                el.textContent = `${target}${suffix}`;
+                continue;
+              }
+              const start = performance.now();
+              const dur = 900;
+              const tick = (now: number) => {
+                const p = Math.min((now - start) / dur, 1);
+                const eased = 1 - (1 - p) * (1 - p);
+                el.textContent = `${Math.round(target * eased)}${suffix}`;
+                if (p < 1) requestAnimationFrame(tick);
+              };
+              requestAnimationFrame(tick);
+            }
+          },
+          { threshold: 0.6 }
+        );
+        document
+          .querySelectorAll<HTMLElement>('.num[data-num]')
+          .forEach((el) => counters.observe(el));
 
         // Remember language choice
         document.querySelectorAll<HTMLAnchorElement>('.lang-toggle a').forEach((a) => {
@@ -123,7 +221,7 @@ const jsonLd = {
           });
         });
 
-        // Back to top
+        // Back to top + scroll progress
         const backTop = document.getElementById('back-top');
         if (backTop) {
           if (!scrollBound) {
@@ -134,12 +232,34 @@ const jsonLd = {
                 document
                   .getElementById('back-top')
                   ?.classList.toggle('show', window.scrollY > 600);
+                const bar = document.getElementById('scroll-progress');
+                if (bar) {
+                  const max = document.documentElement.scrollHeight - window.innerHeight;
+                  bar.style.width = `${max > 0 ? (window.scrollY / max) * 100 : 0}%`;
+                }
               },
               { passive: true }
             );
           }
           backTop.classList.toggle('show', window.scrollY > 600);
           backTop.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Spotlight cards — cursor-tracked glow (bound once, delegated)
+        if (!spotBound) {
+          spotBound = true;
+          document.addEventListener(
+            'pointermove',
+            (e) => {
+              const card = (e.target as HTMLElement | null)
+                ?.closest?.('.card, .repo-card, .index-card, .skill-group, .stat, .srv, .yh-pillar, .yh-dna, .yh-own');
+              if (!card) return;
+              const r = card.getBoundingClientRect();
+              card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+              card.style.setProperty('--my', `${e.clientY - r.top}px`);
+            },
+            { passive: true }
+          );
         }
       }
 

@@ -16,15 +16,14 @@ const { lang, slug } = Astro.props;
 const t = useTranslations(lang);
 const p = projects.find((x) => x.name === slug)!;
 const cs = caseStudies[slug];
-const homeUrl = getRelativeLocaleUrl(lang);
 const title = `${p.name} — Jesús Gabriel Cupello`;
 ---
 
 <Base lang={lang} title={title} description={p.description[lang]}>
   <Nav lang={lang} />
-  <main class="case">
+  <main class="case" id="content" transition:animate="fade">
     <div class="container">
-      <a class="case-back" href={`${homeUrl}#projects`}>{t('case.back')}</a>
+      <a class="case-back" href={getRelativeLocaleUrl(lang, 'projects')}>{t('case.back')}</a>
       <div class="case-head">
         <div>
           <h1 class="case-title">{p.name}</h1>
