@@ -1,0 +1,45 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const stats = [
+  { num: '3+', label: t('about.stat.years') },
+  { num: '4', label: t('about.stat.plugins') },
+  { num: '1', label: t('about.stat.extension') },
+  { num: '1', label: t('about.stat.theme') },
+];
+---
+
+<section id="about">
+  <div class="container">
+    <h2 class="section-title reveal">{t('about.title')}</h2>
+    <div class="about-text reveal">
+      <p>{t('about.p1')}</p>
+      <p>{t('about.p2')}</p>
+    </div>
+    <div class="stats reveal">
+      {stats.map((s) => (
+        <div class="stat">
+          <div class="num">{s.num}</div>
+          <div class="lbl">{s.label}</div>
+        </div>
+      ))}
+    </div>
+    <div class="info-cards reveal">
+      <div class="info-card">
+        <h3>{t('about.edu.title')}</h3>
+        <p>{t('about.edu.text')}</p>
+      </div>
+      <div class="info-card">
+        <h3>{t('about.lang.title')}</h3>
+        <p>{t('about.lang.text')}</p>
+      </div>
+    </div>
+  </div>
+</section>

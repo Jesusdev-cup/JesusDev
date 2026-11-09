@@ -1,0 +1,43 @@
+---
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>404 — command not found</title>
+    <meta name="robots" content="noindex" />
+  </head>
+  <body class="nf-body">
+    <main class="nf">
+      <div class="terminal nf-term">
+        <div class="terminal-bar">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="terminal-title">zsh — 404</span>
+        </div>
+        <div class="terminal-body">
+          <div class="term-line">
+            <span class="ps1">$ </span><span class="cmd">open {Astro.url.pathname}</span>
+          </div>
+          <div class="term-line out nf-err">
+            zsh: command not found: this page doesn't exist
+          </div>
+          <div class="term-line">
+            <span class="ps1">$ </span><span class="cmd">cd ~/jesusgabriel</span>
+          </div>
+          <div class="term-line out">
+            <a class="nf-link" href="/">→ jesusdev-cup.github.io/</a>
+          </div>
+          <div class="term-line">
+            <span class="ps1">$ </span><span class="term-caret"></span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

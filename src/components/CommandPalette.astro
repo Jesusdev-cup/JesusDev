@@ -1,0 +1,158 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { projects } from '../data/projects';
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const homeUrl = getRelativeLocaleUrl(lang);
+
+const items = [
+  ...(['about', 'experience', 'projects', 'skills', 'contact'] as const).map((a) => ({
+    label: t(`nav.${a}`),
+    href: `${homeUrl}#${a}`,
+    group: t('cmdk.nav'),
+  })),
+  {
+    label: t('nav.method'),
+    href: `${lang === 'en' ? '/en' : ''}/yohacase`,
+    group: t('cmdk.nav'),
+  },
+  ...projects.map((p) => ({
+    label: p.name,
+    href: `${lang === 'en' ? '/en' : ''}/work/${p.name}`,
+    group: t('cmdk.projects'),
+  })),
+  {
+    label: lang === 'es' ? 'English version' : 'Versión en español',
+    href: lang === 'es' ? getRelativeLocaleUrl('en') : getRelativeLocaleUrl('es'),
+    group: t('cmdk.actions'),
+  },
+  {
+    label: 'GitHub ↗',
+    href: 'https://github.com/Jesusdev-cup',
+    group: t('cmdk.actions'),
+  },
+  {
+    label: t('contact.cv'),
+    href: '/cv-jesus-gabriel-cupello.pdf',
+    group: t('cmdk.actions'),
+  },
+];
+---
+
+<div class="cmdk" id="cmdk" hidden>
+  <div class="cmdk-backdrop" data-cmdk-close></div>
+  <div class="cmdk-box" role="dialog" aria-modal="true">
+    <input
+      class="cmdk-input"
+      id="cmdk-input"
+      type="text"
+      placeholder={t('cmdk.placeholder')}
+      autocomplete="off"
+    />
+    <ul class="cmdk-list" id="cmdk-list"></ul>
+  </div>
+</div>
+<script type="application/json" id="cmdk-data" set:html={JSON.stringify(items)} />
+
+<script>
+  function initCmdk() {
+    const root = document.getElementById('cmdk');
+    const input = document.getElementById('cmdk-input') as HTMLInputElement | null;
+    const list = document.getElementById('cmdk-list');
+    const data = document.getElementById('cmdk-data');
+    if (!root || !input || !list || !data || root.dataset.bound) return;
+    root.dataset.bound = '1';
+
+    const items = JSON.parse(data.textContent ?? '[]') as {
+      label: string;
+      href: string;
+      group: string;
+    }[];
+    let filtered = items;
+    let active = 0;
+
+    const render = () => {
+      list.innerHTML = '';
+      let lastGroup = '';
+      filtered.forEach((item, i) => {
+        if (item.group !== lastGroup) {
+          lastGroup = item.group;
+          const gh = document.createElement('li');
+          gh.className = 'cmdk-group';
+          gh.textContent = item.group;
+          list.appendChild(gh);
+        }
+        const li = document.createElement('li');
+        li.className = 'cmdk-item' + (i === active ? ' active' : '');
+        const a = document.createElement('a');
+        a.href = item.href;
+        a.textContent = item.label;
+        if (item.href.startsWith('http')) a.target = '_blank';
+        li.appendChild(a);
+        list.appendChild(li);
+      });
+    };
+
+    const open = () => {
+      root.hidden = false;
+      input.value = '';
+      filtered = items;
+      active = 0;
+      render();
+      input.focus();
+    };
+
+    const close = () => {
+      root.hidden = true;
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        root.hidden ? open() : close();
+      } else if (e.key === 'Escape' && !root.hidden) {
+        close();
+      }
+    });
+
+    root
+      .querySelector('[data-cmdk-close]')
+      ?.addEventListener('click', close);
+
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      filtered = q
+        ? items.filter((i) => i.label.toLowerCase().includes(q))
+        : items;
+      active = 0;
+      render();
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        active = Math.min(active + 1, filtered.length - 1);
+        render();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        active = Math.max(active - 1, 0);
+        render();
+      } else if (e.key === 'Enter' && filtered[active]) {
+        window.location.href = filtered[active].href;
+      }
+    });
+
+    document
+      .querySelectorAll<HTMLElement>('[data-cmdk-open]')
+      .forEach((b) => b.addEventListener('click', open));
+  }
+
+  initCmdk();
+  document.addEventListener('astro:page-load', initCmdk);
+</script>

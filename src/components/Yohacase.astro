@@ -1,0 +1,154 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from './Nav.astro';
+import Footer from './Footer.astro';
+import {
+  pillars,
+  principles,
+  phases,
+  influences,
+  antipatterns,
+  antipatternText,
+} from '../data/yohacase';
+import { projects } from '../data/projects';
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const title = `yohacase — ${t('site.title')}`;
+const base = lang === 'en' ? '/en' : '';
+
+const toc = [
+  { id: 'pillars', label: t('yh.pillars') },
+  { id: 'principles', label: t('yh.principles') },
+  { id: 'pipeline', label: t('yh.pipeline') },
+  { id: 'dna', label: t('yh.dna') },
+  { id: 'antipatterns', label: t('yh.anti') },
+  { id: 'applied', label: t('yh.applied') },
+];
+---
+
+<Base lang={lang} title={title} description={t('yh.intro')}>
+  <Nav lang={lang} />
+  <main class="yh">
+    <section class="yh-hero">
+      <div class="container">
+        <p class="hero-greeting reveal">{t('yh.kicker')}</p>
+        <h1 class="yh-title reveal">yohacase<span class="yh-caret">_</span></h1>
+        <p class="yh-tagline reveal">{t('yh.tagline')}</p>
+        <p class="yh-intro reveal">{t('yh.intro')}</p>
+
+        <div class="yh-formula reveal" aria-hidden="true">
+          <div class="yh-fbox">stack</div>
+          <span class="yh-op">+</span>
+          <div class="yh-fbox">modules</div>
+          <span class="yh-op">+</span>
+          <div class="yh-fbox">components</div>
+          <span class="yh-op">=</span>
+          <div class="yh-fbox result">{t('yh.formula').split(' = ')[1]}</div>
+        </div>
+
+        <nav class="yh-toc reveal" aria-label="Index">
+          {toc.map((item) => <a href={`#${item.id}`}>{item.label}</a>)}
+        </nav>
+      </div>
+    </section>
+
+    <section class="yh-section" id="pillars">
+      <div class="container">
+        <h2 class="section-title reveal">{t('yh.pillars')}</h2>
+        <div class="yh-pillars">
+          {pillars.map((p) => (
+            <div class="yh-pillar reveal">
+              <span class="yh-num">{p.num}</span>
+              <h3>{p.title[lang]}</h3>
+              <p>{p.desc[lang]}</p>
+              <div class="yh-items">
+                {p.items.map((i) => <span class="tag">{i}</span>)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="yh-section" id="principles">
+      <div class="container">
+        <h2 class="section-title reveal">{t('yh.principles')}</h2>
+        <ol class="yh-principles">
+          {principles.map((p, i) => (
+            <li class="yh-principle reveal">
+              <span class="yh-pnum">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{p.title[lang]}</h3>
+                <p>{p.desc[lang]}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="yh-section" id="pipeline">
+      <div class="container">
+        <h2 class="section-title reveal">{t('yh.pipeline')}</h2>
+        <ol class="yh-pipeline">
+          {phases.map((ph, i) => (
+            <li class="yh-phase reveal">
+              <span class="yh-step">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{ph.name[lang]}</h3>
+              <p>{ph.desc[lang]}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="yh-section" id="dna">
+      <div class="container">
+        <h2 class="section-title reveal">{t('yh.dna')}</h2>
+        <p class="section-sub reveal">{t('yh.dna.sub')}</p>
+        <div class="yh-dna-grid">
+          {influences.map((inf) => (
+            <div class="yh-dna reveal">
+              <span class="yh-dna-src">{inf.source}</span>
+              <h3>{inf.trait[lang]}</h3>
+              <p>{inf.applied[lang]}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="yh-section" id="antipatterns">
+      <div class="container">
+        <h2 class="section-title reveal">{t('yh.anti')}</h2>
+        <p class="section-sub reveal">{t('yh.anti.sub')}</p>
+        <div class="yh-anti-grid">
+          {antipatterns.map((key) => (
+            <div class="yh-anti reveal">
+              <h3><span class="yh-x">✕</span> {antipatternText[key][lang].title}</h3>
+              <p>{antipatternText[key][lang].desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="yh-section" id="applied">
+      <div class="container">
+        <h2 class="section-title reveal">{t('yh.applied')}</h2>
+        <div class="yh-applied reveal">
+          {projects.map((p) => (
+            <a class="tag yh-chip" href={`${base}/work/${p.name}`}>{p.name}</a>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer lang={lang} />
+</Base>

@@ -1,0 +1,120 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <p class="hero-greeting">{t('hero.greeting')}</p>
+      <h1 class="hero-name">Jesús Gabriel Cupello</h1>
+      <p class="hero-role">{t('hero.role')}</p>
+      <p class="hero-tagline">{t('hero.tagline')}</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#projects">{t('hero.cta.projects')}</a>
+        <a class="btn btn-ghost" href="#contact">{t('hero.cta.contact')}</a>
+      </div>
+      <p class="hero-status"><span class="dot"></span>{t('hero.status')}</p>
+    </div>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="terminal-title">zsh — portfolio</span>
+      </div>
+      <div
+        class="terminal-body"
+        id="term-body"
+        data-out1={t('terminal.out1')}
+        data-out2={t('terminal.out2')}
+        data-out3={t('terminal.out3')}
+      >
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function initTerminal() {
+    const body = document.getElementById('term-body');
+    if (!body || body.dataset.done) return;
+    body.dataset.done = '1';
+    const lines = [
+      { cmd: 'whoami', out: body.dataset.out1 ?? '' },
+      { cmd: 'cat ~/stack.txt', out: body.dataset.out2 ?? '' },
+      { cmd: './current-work.sh', out: body.dataset.out3 ?? '' },
+    ];
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const makeLine = () => {
+      const el = document.createElement('div');
+      el.className = 'term-line';
+      body.appendChild(el);
+      return el;
+    };
+
+    const cmdLine = (text: string) => {
+      const el = makeLine();
+      const ps = document.createElement('span');
+      ps.className = 'ps1';
+      ps.textContent = '$ ';
+      const cmd = document.createElement('span');
+      cmd.className = 'cmd';
+      cmd.textContent = text;
+      el.append(ps, cmd);
+      return cmd;
+    };
+
+    const outLine = (text: string) => {
+      const el = makeLine();
+      el.classList.add('out');
+      el.textContent = text;
+    };
+
+    const caretLine = () => {
+      const el = makeLine();
+      const ps = document.createElement('span');
+      ps.className = 'ps1';
+      ps.textContent = '$ ';
+      const c = document.createElement('span');
+      c.className = 'term-caret';
+      el.append(ps, c);
+      return el;
+    };
+
+    if (reduced) {
+      for (const { cmd, out } of lines) {
+        cmdLine(cmd);
+        outLine(out);
+      }
+      caretLine();
+    } else {
+      const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+      (async () => {
+        let caret = caretLine();
+        for (const { cmd, out } of lines) {
+          caret.remove();
+          const cmdEl = cmdLine('');
+          for (const ch of cmd) {
+            cmdEl.textContent += ch;
+            await sleep(35 + Math.random() * 45);
+          }
+          await sleep(280);
+          outLine(out);
+          await sleep(380);
+          caret = caretLine();
+        }
+      })();
+    }
+  }
+
+  initTerminal();
+  document.addEventListener('astro:page-load', initTerminal);
+</script>

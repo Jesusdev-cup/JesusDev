@@ -1,0 +1,54 @@
+---
+import { projects } from '../data/projects';
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id="projects">
+  <div class="container">
+    <h2 class="section-title reveal">{t('projects.title')}</h2>
+    <p class="section-sub reveal">{t('projects.subtitle')}</p>
+    <div class="projects-grid">
+      {projects.map((p, i) => (
+        <article class="card reveal">
+          <div class="card-thumb" aria-hidden="true">
+            <div class="ct-dots"><i></i><i></i><i></i></div>
+            <div class="ct-lines">
+              {[62, 45, 80, 38].map((w, j) => (
+                <i style={`width:${(w + i * 17) % 70 + 25}%`} data-line={j + 1}></i>
+              ))}
+            </div>
+          </div>
+          <div class="card-head">
+            <h3 class="card-name">
+              <a href={`${lang === 'en' ? '/en' : ''}/work/${p.name}`}>{p.name}</a>
+            </h3>
+            <span class="card-kind">{p.kind[lang]}</span>
+          </div>
+          <span class={`card-status ${p.status}`}>
+            {p.status === 'prod' ? t('projects.prod') : t('projects.dev')}
+          </span>
+          <p class="card-desc">{p.description[lang]}</p>
+          <div class="tags">
+            {p.tags.map((tag) => <span class="tag">{tag}</span>)}
+          </div>
+          {p.links && (
+            <div class="card-links">
+              {p.links.map((l) => (
+                <a class="card-link" href={l.href} target="_blank" rel="noopener">
+                  {l.label[lang]}
+                </a>
+              ))}
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

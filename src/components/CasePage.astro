@@ -1,0 +1,71 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from './Nav.astro';
+import Footer from './Footer.astro';
+import { projects } from '../data/projects';
+import { caseStudies } from '../data/caseStudies';
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  slug: string;
+}
+
+const { lang, slug } = Astro.props;
+const t = useTranslations(lang);
+const p = projects.find((x) => x.name === slug)!;
+const cs = caseStudies[slug];
+const homeUrl = lang === 'en' ? '/en/' : '/';
+const title = `${p.name} — Jesús Gabriel Cupello`;
+---
+
+<Base lang={lang} title={title} description={p.description[lang]}>
+  <Nav lang={lang} />
+  <main class="case">
+    <div class="container">
+      <a class="case-back" href={`${homeUrl}#projects`}>{t('case.back')}</a>
+      <div class="case-head">
+        <div>
+          <h1 class="case-title">{p.name}</h1>
+          <span class="card-kind">{p.kind[lang]}</span>
+        </div>
+        <span class={`card-status ${p.status}`}>
+          {p.status === 'prod' ? t('projects.prod') : t('projects.dev')}
+        </span>
+      </div>
+      <p class="case-desc">{p.description[lang]}</p>
+
+      <h2 class="case-h2">{t('case.problem')}</h2>
+      <p class="case-text">{cs.problem[lang]}</p>
+
+      <h2 class="case-h2">{t('case.solution')}</h2>
+      <ul class="case-list">
+        {cs.solution[lang].map((s) => <li>{s}</li>)}
+      </ul>
+
+      <h2 class="case-h2">{t('case.highlights')}</h2>
+      <div class="case-highlights">
+        {cs.highlights[lang].map((h) => <span class="hl-chip">{h}</span>)}
+      </div>
+
+      <h2 class="case-h2">{t('case.role')}</h2>
+      <p class="case-text">{cs.role[lang]}</p>
+
+      <h2 class="case-h2">{t('case.stack')}</h2>
+      <div class="tags">
+        {p.tags.map((tag) => <span class="tag">{tag}</span>)}
+      </div>
+
+      {p.links && (
+        <div class="card-links case-links">
+          {p.links.map((l) => (
+            <a class="btn btn-ghost" href={l.href} target="_blank" rel="noopener">
+              {l.label[lang]}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </main>
+  <Footer lang={lang} />
+</Base>

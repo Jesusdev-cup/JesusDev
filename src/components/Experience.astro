@@ -1,0 +1,28 @@
+---
+import { jobs } from '../data/experience';
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id="experience">
+  <div class="container">
+    <h2 class="section-title reveal">{t('exp.title')}</h2>
+    <p class="section-sub reveal">{t('exp.subtitle')}</p>
+    <div class="timeline">
+      {jobs.map((j) => (
+        <article class="tl-item reveal">
+          <span class="tl-period">{j.period[lang]}</span>
+          <h3 class="tl-role">{j.role[lang]}</h3>
+          <span class="tl-company">{j.company}</span>
+          <p class="tl-desc">{j.description[lang]}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

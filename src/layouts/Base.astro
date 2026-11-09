@@ -1,0 +1,149 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { goatcounterCode } from '../config';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+}
+
+const { lang, title, description } = Astro.props;
+const site = Astro.site ?? new URL('https://jesusdev-cup.github.io');
+const canonical = new URL(Astro.url.pathname, site);
+const esUrl = new URL(getRelativeLocaleUrl('es'), site);
+const enUrl = new URL(getRelativeLocaleUrl('en'), site);
+const ogImage = new URL('/og.png', site);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Jesús Gabriel Cupello Salguero',
+  jobTitle: lang === 'es' ? 'Desarrollador de Software' : 'Software Developer',
+  url: site.href,
+  email: 'mailto:gabrielcupello@hotmail.com',
+  telephone: '+584145255554',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Cabudare',
+    addressRegion: 'Lara',
+    addressCountry: 'VE',
+  },
+  sameAs: ['https://github.com/Jesusdev-cup'],
+  knowsAbout: ['PHP', 'JavaScript', 'React', 'WordPress', 'REST APIs', 'Automation'],
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="es" href={esUrl} />
+    <link rel="alternate" hreflang="en" href={enUrl} />
+    <link rel="alternate" hreflang="x-default" href={esUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content={lang === 'es' ? 'es_VE' : 'en_US'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="generator" content={Astro.generator} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <ClientRouter />
+    <script is:inline>
+      // Language auto-detect: first visit to "/" redirects EN browsers to /en/.
+      // A stored choice (lang toggle click) always wins.
+      (() => {
+        try {
+          const stored = localStorage.getItem('jg-lang');
+          if (
+            !stored &&
+            location.pathname === '/' &&
+            (navigator.language || '').toLowerCase().startsWith('en')
+          ) {
+            location.replace('/en/');
+          }
+        } catch {}
+      })();
+    </script>
+    <script src="/js/karibase-auto-seo.js" defer></script>
+    {goatcounterCode && (
+      <script
+        data-goatcounter={`https://${goatcounterCode}.goatcounter.com/count`}
+        async
+        src="//gc.zgo.at/count.js"
+      />
+    )}
+  </head>
+  <body data-auto-seo>
+    <a class="skip-link" href="#about">Skip to content</a>
+    <slot />
+    <button id="back-top" class="back-top" aria-label="Back to top">↑</button>
+    <script>
+      let scrollBound = false;
+
+      function init() {
+        // Scroll reveal
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.12 }
+        );
+        document
+          .querySelectorAll('.reveal:not(.visible)')
+          .forEach((el) => observer.observe(el));
+
+        // Remember language choice
+        document.querySelectorAll<HTMLAnchorElement>('.lang-toggle a').forEach((a) => {
+          if (a.dataset.bound) return;
+          a.dataset.bound = '1';
+          a.addEventListener('click', () => {
+            try {
+              localStorage.setItem('jg-lang', a.textContent?.trim().toLowerCase() ?? '');
+            } catch {}
+          });
+        });
+
+        // Back to top
+        const backTop = document.getElementById('back-top');
+        if (backTop) {
+          if (!scrollBound) {
+            scrollBound = true;
+            window.addEventListener(
+              'scroll',
+              () => {
+                document
+                  .getElementById('back-top')
+                  ?.classList.toggle('show', window.scrollY > 600);
+              },
+              { passive: true }
+            );
+          }
+          backTop.classList.toggle('show', window.scrollY > 600);
+          backTop.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+
+      init();
+      document.addEventListener('astro:page-load', init);
+    </script>
+  </body>
+</html>

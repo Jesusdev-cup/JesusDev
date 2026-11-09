@@ -1,0 +1,60 @@
+---
+import { skillGroups } from '../data/projects';
+import { useTranslations, type Lang, type UIKey } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const iconBase = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons';
+const icons: Record<string, string> = {
+  'PHP 8.x': 'php/php-original.svg',
+  'WordPress (plugins/temas)': 'wordpress/wordpress-plain.svg',
+  'MySQL · SQLite': 'mysql/mysql-original.svg',
+  'Supabase · PocketBase': 'supabase/supabase-original.svg',
+  'Golang (básico)': 'go/go-original.svg',
+  'JavaScript ES2022+': 'javascript/javascript-original.svg',
+  React: 'react/react-original.svg',
+  'HTML5 · CSS3': 'html5/html5-original.svg',
+  Tailwind: 'tailwindcss/tailwindcss-original.svg',
+  'Chrome MV3': 'chrome/chrome-original.svg',
+  Git: 'git/git-original.svg',
+  Figma: 'figma/figma-original.svg',
+  'Google Apps Script': 'google/google-original.svg',
+  'Google APIs': 'google/google-original.svg',
+};
+---
+
+<section id="skills">
+  <div class="container">
+    <h2 class="section-title reveal">{t('skills.title')}</h2>
+    <p class="section-sub reveal">{t('skills.subtitle')}</p>
+    <div class="skills-grid">
+      {skillGroups.map((group) => (
+        <div class="skill-group reveal">
+          <h3>{t(group.key as UIKey)}</h3>
+          <ul>
+            {group.items.map((item) => (
+              <li class={icons[item] ? 'has-ico' : ''}>
+                {icons[item] && (
+                  <img
+                    class="skill-ico"
+                    src={`${iconBase}/${icons[item]}`}
+                    alt=""
+                    width="14"
+                    height="14"
+                    loading="lazy"
+                  />
+                )}
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

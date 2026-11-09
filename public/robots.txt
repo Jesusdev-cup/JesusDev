@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jesusdev-cup.github.io/sitemap-index.xml
