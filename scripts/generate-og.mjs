@@ -22,7 +22,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
   <text x="100" y="290" font-family="Consolas, monospace" font-size="72" font-weight="bold" fill="#e6edf3">Jesús Gabriel Cupello</text>
   <text x="100" y="360" font-family="Consolas, monospace" font-size="34" fill="#8b98a9">&gt; Software Developer &amp; Systems Analyst</text>
   <text x="100" y="460" font-family="Consolas, monospace" font-size="28" fill="#3fb950">PHP · JavaScript · React · WordPress · n8n</text>
-  <text x="100" y="520" font-family="Consolas, monospace" font-size="24" fill="#8b98a9">jesusdev-cup.github.io</text>
+  <text x="100" y="520" font-family="Consolas, monospace" font-size="24" fill="#8b98a9">jesusdev-cup.github.io/JesusDev</text>
 </svg>`;
 
 await sharp(Buffer.from(svg)).png().toFile('public/og.png');

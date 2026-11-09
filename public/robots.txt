@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://jesusdev-cup.github.io/sitemap-index.xml
+Sitemap: https://jesusdev-cup.github.io/JesusDev/sitemap-index.xml

@@ -20,7 +20,7 @@ const anchors = ['about', 'experience', 'projects', 'skills', 'contact'] as cons
     <ul class="nav-links">
       {anchors.map((a) => <li><a href={`${homeUrl}#${a}`}>{t(`nav.${a}`)}</a></li>)}
       <li>
-        <a href={`${lang === 'en' ? '/en' : ''}/yohacase`}>{t('nav.method')}</a>
+        <a href={getRelativeLocaleUrl(lang, 'yohacase')}>{t('nav.method')}</a>
       </li>
     </ul>
     <div class="nav-actions">

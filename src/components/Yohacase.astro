@@ -1,4 +1,5 @@
 ---
+import { getRelativeLocaleUrl } from 'astro:i18n';
 import Base from '../layouts/Base.astro';
 import Nav from './Nav.astro';
 import Footer from './Footer.astro';
@@ -20,7 +21,6 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 const title = `yohacase — ${t('site.title')}`;
-const base = lang === 'en' ? '/en' : '';
 
 const toc = [
   { id: 'pillars', label: t('yh.pillars') },
@@ -144,7 +144,7 @@ const toc = [
         <h2 class="section-title reveal">{t('yh.applied')}</h2>
         <div class="yh-applied reveal">
           {projects.map((p) => (
-            <a class="tag yh-chip" href={`${base}/work/${p.name}`}>{p.name}</a>
+            <a class="tag yh-chip" href={getRelativeLocaleUrl(lang, `work/${p.name}`)}>{p.name}</a>
           ))}
         </div>
       </div>

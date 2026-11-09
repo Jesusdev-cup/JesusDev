@@ -19,12 +19,12 @@ const items = [
   })),
   {
     label: t('nav.method'),
-    href: `${lang === 'en' ? '/en' : ''}/yohacase`,
+    href: getRelativeLocaleUrl(lang, 'yohacase'),
     group: t('cmdk.nav'),
   },
   ...projects.map((p) => ({
     label: p.name,
-    href: `${lang === 'en' ? '/en' : ''}/work/${p.name}`,
+    href: getRelativeLocaleUrl(lang, `work/${p.name}`),
     group: t('cmdk.projects'),
   })),
   {
@@ -39,7 +39,7 @@ const items = [
   },
   {
     label: t('contact.cv'),
-    href: '/cv-jesus-gabriel-cupello.pdf',
+    href: `${import.meta.env.BASE_URL}/cv-jesus-gabriel-cupello.pdf`,
     group: t('cmdk.actions'),
   },
 ];
