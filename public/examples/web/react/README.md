@@ -22,3 +22,9 @@ contrato REST tipado, mutación idempotente, UI que solo consume.
 GET  /api/time-entries?day=YYYY-MM-DD
 POST /api/time-entries        headers: X-Request-Id  → idempotente
 ```
+
+## Restricciones aplicadas (máxima validación)
+
+- `shared/api.ts`: JSON only, `AbortSignal.timeout(10s)`, `credentials: 'same-origin'` — la UI nunca arma fetch suelto
+- Error del contrato tipado (`ApiError`) — la UI nunca parsea respuestas a mano
+- Form con bounds reales: `required`, `maxLength={255}`, `min={1}`/`max={1440}`, `trim()` antes de enviar

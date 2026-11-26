@@ -7,6 +7,12 @@ sidebar: Ejemplos web
 El molde no cambia — cambia el equivalente de "módulo", "contrato" y "hook"
 en cada runtime. El mismo dominio `time-entries`, doce veces.
 
+> Todos los ejemplos aplican **máxima validación y máxima restricción**:
+> schemas `.strict()` con bounds completos (task 1-255, minutes 1-1440),
+> bodies acotados, content-type obligatorio, permisos reales (401 vs 403),
+> rate limiting, security headers y mínimo privilegio en cada runtime.
+> Cada `README.md` lista las restricciones concretas aplicadas.
+
 ## Front-end
 
 ### React — feature + contrato tipado

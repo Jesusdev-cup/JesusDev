@@ -23,3 +23,11 @@ El molde en Svelte 5 + SvelteKit: el dominio es una clase con runas
 GET  /time-entries?day=YYYY-MM-DD   → load()
 POST /time-entries?/create         → action, X-Request-Id dedup
 ```
+
+## Restricciones aplicadas (máxima validación)
+
+- La validación corre en el servidor (`+page.server.ts`) — `fail(400/403)` es la única forma de error del contrato
+- `task`/`minutes` acotados en la action antes de tocar el dominio (`trim`, 1-255, 1-1440)
+- `day` validado con regex `YYYY-MM-DD` → `400`
+- `shared/api.ts` (cliente): JSON only, `AbortSignal.timeout(10s)`, `credentials: 'same-origin'`
+- Form con bounds reales + `use:enhance` — funciona sin JS sin aflojar la validación

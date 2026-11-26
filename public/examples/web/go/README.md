@@ -23,3 +23,14 @@ GET  /api/time-entries?day=YYYY-MM-DD   perm: time.read
 POST /api/time-entries                  perm: time.write + X-Request-Id dedup
 GET  /api/status                        health
 ```
+
+## Restricciones aplicadas (máxima validación)
+
+- `http.MaxBytesReader` — body acotado a 8 KiB → `413` antes de parsear
+- `dec.DisallowUnknownFields()` — campos desconocidos → `400`
+- `Content-Type: application/json` obligatorio → `415`
+- `X-Request-Id` obligatorio en POST → `400`
+- Bounds completos: `task` 1-255 (tras trim), `minutes` 1-1440; `day` regex → `400`
+- `SecurityHeaders` + `RateLimit(60/min)` middleware — `429` + `Retry-After`
+- `http.Server` con timeouts explícitos — `ReadHeaderTimeout` contra Slowloris
+- `401` sin principal vs `403` sin permiso — nunca se confunden

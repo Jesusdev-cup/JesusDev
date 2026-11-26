@@ -27,3 +27,10 @@ la UI solo consume.
 GET  /api/time-entries?day=YYYY-MM-DD
 POST /api/time-entries        headers: X-Request-Id (interceptor) → idempotente
 ```
+
+## Restricciones aplicadas (máxima validación)
+
+- Signal form schema: `required` + `maxLength(255)` + `max(1440)` — el contrato en cliente
+- Route guard `can()` consulta la matriz de permisos real — no es un stub
+- Interceptor: headers fijos (request id + auth), nunca ciegos del request entrante
+- `providedIn: 'root'` + `inject()` — un solo punto de construcción del dominio

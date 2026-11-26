@@ -23,3 +23,14 @@ GET  /api/time-entries?day=YYYY-MM-DD   perm: time.read
 POST /api/time-entries                  perm: time.write + Idempotency-Key
 GET  /api/status                        health
 ```
+
+## Restricciones aplicadas (máxima validación)
+
+- `express.json({ limit: '8kb' })` — bodies acotados antes de parsear
+- `securityHeaders()` — headers en cada respuesta (helmet-style, sin deps)
+- `rateLimit(60)` — ventana fija por IP+ruta, `429` + `Retry-After`
+- `requireJson()` — `415` si el body no es `application/json`
+- Schema `.strict()` — campos desconocidos → `400`; `task` 1-255, `minutes` 1-1440
+- `day` validado con regex `YYYY-MM-DD` → `400`
+- `401` sin principal vs `403` sin permiso — nunca se confunden
+- `x-powered-by` deshabilitado — el stack no se anuncia

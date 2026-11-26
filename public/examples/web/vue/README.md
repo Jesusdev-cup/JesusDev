@@ -23,3 +23,10 @@ composable, el contrato es el `api` compartido, la UI solo consume.
 GET  /api/time-entries?day=YYYY-MM-DD
 POST /api/time-entries        headers: X-Request-Id  → idempotente
 ```
+
+## Restricciones aplicadas (máxima validación)
+
+- `shared/api.ts`: JSON only, `AbortSignal.timeout(10s)`, `credentials: 'same-origin'` — la UI nunca arma fetch suelto
+- Error del contrato tipado (`ApiError`) — la UI nunca parsea respuestas a mano
+- Router: guard de permiso antes de montar la ruta del dominio
+- Form con bounds reales: `required`, `maxlength="255"`, `min="1"`/`max="1440"`, `trim()` antes de enviar

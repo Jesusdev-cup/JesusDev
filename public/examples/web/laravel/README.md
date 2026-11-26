@@ -23,3 +23,12 @@ Policy = matriz única, `app/Domain/` = módulos.
 GET  /api/time-entries?day=YYYY-MM-DD   sanctum + time.read
 POST /api/time-entries                  sanctum + time.write + Idempotency-Key
 ```
+
+## Restricciones aplicadas (máxima validación)
+
+- `bail` + bounds en cada rule: `task` 1-255, `minutes` 1-1440 — un solo fallo por campo
+- `prepareForValidation()` — trim antes de validar, el dominio recibe datos normalizados
+- `throttle:60,1` reads / `throttle:10,1` writes — presupuestos por tipo de operación
+- `Idempotency-Key` **obligatorio** → `400` sin header; formato validado (`[\w\-:.]{1,128}`)
+- `day` validado `date_format:Y-m-d` → `422`
+- `authorize()` en el Form Request → `403` antes del dominio

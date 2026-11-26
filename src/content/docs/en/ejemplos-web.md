@@ -8,6 +8,12 @@ The mold does not change — what changes is the equivalent of "module",
 "contract" and "hook" in each runtime. The same `time-entries` domain,
 twelve times.
 
+> Every example applies **maximum validation and maximum restriction**:
+> `.strict()` schemas with full bounds (task 1-255, minutes 1-1440),
+> bounded bodies, mandatory content-type, real permissions (401 vs 403),
+> rate limiting, security headers and least privilege in each runtime.
+> Each `README.md` lists the concrete restrictions applied.
+
 ## Front-end
 
 ### React — feature + typed contract

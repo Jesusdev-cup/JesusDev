@@ -21,3 +21,11 @@ GET  /api/time-entries?day=YYYY-MM-DD
 POST /api/time-entries        X-Request-Id dedup
 POST /_actions/createEntry    astro action (form) — schema zod
 ```
+
+## Restricciones aplicadas (máxima validación)
+
+- Schema `.strict()` — campos desconocidos → `400`; `task` 1-255, `minutes` 1-1440 (endpoint y action)
+- `Content-Type: application/json` obligatorio → `415`
+- `Content-Length` + body real ≤ 8 KiB → `413` antes de parsear
+- JSON malformado → `400` con la forma de error del contrato
+- `day` validado con regex `YYYY-MM-DD` → `400`

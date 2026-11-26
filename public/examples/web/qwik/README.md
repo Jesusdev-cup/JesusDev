@@ -23,3 +23,10 @@ El molde en Qwik City: el contrato vive en la ruta (`routeLoader$` +
 GET  /time-entries?day=YYYY-MM-DD   → routeLoader$
 POST /time-entries (form)          → routeAction$ + zod$, X-Request-Id dedup
 ```
+
+## Restricciones aplicadas (máxima validación)
+
+- `zod$().strict()` — campos desconocidos → `400`; `task` 1-255, `minutes` 1-1440
+- `fail(403)` en el action — el permiso se chequea en servidor antes del dominio
+- `day` validado con regex `YYYY-MM-DD` → `fail(400)` en el loader
+- `server$()` es la única frontera cliente/servidor — el dominio nunca se importa en UI

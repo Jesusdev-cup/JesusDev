@@ -21,3 +21,10 @@ los eventos PSR-14 son los hooks, el consumer depende de interfaces.
 $entries->create(new NewEntry('Deep work', 90), $requestId);
 // mismo $requestId → mismo Entry, sin duplicado
 ```
+
+## Restricciones aplicadas (máxima validación)
+
+- `declare(strict_types=1)` — sin coerciones implícitas en la frontera
+- `NewEntry` valida en construcción: `task` 1-255 (tras trim), `minutes` 1-1440 → `InvalidArgumentException`
+- El dominio nunca puede contener un valor fuera de contrato
+- `Entry` readonly — estado inmutable una vez creado

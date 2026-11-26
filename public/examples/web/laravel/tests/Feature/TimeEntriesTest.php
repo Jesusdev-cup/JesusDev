@@ -33,8 +33,30 @@ class TimeEntriesTest extends TestCase
         $user->givePermissionTo('time.write');
 
         $this->actingAs($user)
-            ->postJson('/api/time-entries', ['task' => '', 'minutes' => 0])
+            ->postJson('/api/time-entries', ['task' => '', 'minutes' => 0], ['Idempotency-Key' => 'req-xyz'])
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['task', 'minutes']);
+    }
+
+    public function test_create_entry_requires_idempotency_key(): void
+    {
+        $user = User::factory()->create();
+        $user->givePermissionTo('time.write');
+
+        // Mutations without the header are refused before the domain runs.
+        $this->actingAs($user)
+            ->postJson('/api/time-entries', ['task' => 'Deep work', 'minutes' => 90])
+            ->assertStatus(400);
+    }
+
+    public function test_minutes_upper_bound_is_enforced(): void
+    {
+        $user = User::factory()->create();
+        $user->givePermissionTo('time.write');
+
+        $this->actingAs($user)
+            ->postJson('/api/time-entries', ['task' => 'Deep work', 'minutes' => 1441], ['Idempotency-Key' => 'req-ub'])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['minutes']);
     }
 }

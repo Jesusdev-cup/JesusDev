@@ -21,3 +21,10 @@ backend, el popup es una UI que solo consume mensajes tipados.
 chrome.runtime.sendMessage({ type: 'entries.create', payload, requestId })
 // → { ok: true, data: TimeEntry } | { ok: false, error: { code, message } }
 ```
+
+## Restricciones aplicadas (máxima validación / mínimo privilegio)
+
+- Sin `content_scripts` — la extensión no toca páginas; solo permiso `storage`
+- `isMsg()` — todo mensaje entrante se valida contra el contrato antes del dominio (`invalid_msg` si falla)
+- Bounds completos en el guard: `task` 1-255, `minutes` 1-1440, `day` regex `YYYY-MM-DD`, `requestId` requerido
+- El popup renderiza solo con `textContent`/`createElement` — cero `innerHTML`, los datos nunca se vuelven markup
