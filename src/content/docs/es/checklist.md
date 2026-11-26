@@ -1,10 +1,10 @@
 ---
 title: Checklist de adopción
-description: Siete preguntas que determinan si un proyecto es yohacase — y cómo adoptarlo.
+description: Ocho preguntas que determinan si un proyecto es yohacase — y cómo adoptarlo.
 sidebar: Checklist
 ---
 
-## Las siete preguntas
+## Las ocho preguntas
 
 1. ¿Identifiqué los dominios y qué datos posee cada uno?
 2. ¿El contrato REST + schema existe antes de escribir la UI?
@@ -13,8 +13,9 @@ sidebar: Checklist
 5. ¿Hay una suite QA que corre en test antes de prod?
 6. ¿El release se puede apagar sin desplegar?
 7. ¿Diagnósticos y audit logs incluidos desde el día uno?
+8. ¿El siguiente módulo se enchufa sin tocar los existentes?
 
-> Si las 7 son sí → es yohacase.
+> Si las 8 son sí → es yohacase.
 
 ## Cómo adoptarlo
 

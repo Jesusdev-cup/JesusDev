@@ -1,10 +1,10 @@
 ---
 title: Adoption checklist
-description: Seven questions that decide whether a project is yohacase — and how to adopt it.
+description: Eight questions that decide whether a project is yohacase — and how to adopt it.
 sidebar: Checklist
 ---
 
-## The seven questions
+## The eight questions
 
 1. Did I identify the domains and what data each one owns?
 2. Does the REST contract + schema exist before the UI gets written?
@@ -13,8 +13,9 @@ sidebar: Checklist
 5. Is there a QA suite that runs on test before prod?
 6. Can the release be turned off without a deploy?
 7. Are diagnostics and audit logs included from day one?
+8. Does the next module plug in without touching the existing ones?
 
-> If all 7 are yes → it is yohacase.
+> If all 8 are yes → it is yohacase.
 
 ## How to adopt it
 

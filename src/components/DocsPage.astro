@@ -4,8 +4,9 @@ import { render, type CollectionEntry } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Nav from './Nav.astro';
 import Footer from './Footer.astro';
+import CommandPalette from './CommandPalette.astro';
 import { docsGroups } from '../data/docsNav';
-import type { Lang } from '../i18n/ui';
+import { useTranslations, type Lang } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
@@ -14,19 +15,43 @@ interface Props {
 }
 
 const { lang, entry, docs } = Astro.props;
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
+const t = useTranslations(lang);
 
 const prefix = lang === 'en' ? 'en/' : 'es/';
 const slugOf = (e: CollectionEntry<'docs'>) => e.id.slice(prefix.length);
 const current = slugOf(entry);
 const title = `${entry.data.title} — yohacase`;
+
+const group = docsGroups.find((g) => g.slugs.includes(current));
+
+// Flattened reading order drives the prev/next pager
+const order = docsGroups.flatMap((g) => g.slugs);
+const bySlug = (s: string) => docs.find((e) => slugOf(e) === s);
+const idx = order.indexOf(current);
+const prev = idx > 0 ? bySlug(order[idx - 1]) : undefined;
+const next = idx >= 0 && idx < order.length - 1 ? bySlug(order[idx + 1]) : undefined;
+
+// On-this-page TOC: h2 top-level, h3 nested
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
 <Base lang={lang} title={title} description={entry.data.description}>
   <Nav lang={lang} />
   <main class="docs" id="content" transition:animate="fade">
     <div class="container docs-grid">
-      <aside class="docs-side">
+      <button
+        class="docs-side-toggle"
+        data-docs-toggle
+        aria-expanded="false"
+        aria-controls="docs-side"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h10" />
+        </svg>
+        {t('docs.menu')}
+      </button>
+      <aside class="docs-side" id="docs-side">
         {docsGroups.map((g) => (
           <nav class="docs-group" aria-label={g.label[lang]}>
             <p class="docs-group-label">{g.label[lang]}</p>
@@ -52,12 +77,84 @@ const title = `${entry.data.title} — yohacase`;
         ))}
       </aside>
       <article class="docs-article">
-        <p class="docs-crumb">~/docs/{current}</p>
+        <p class="docs-crumb">~/docs/{group ? `${group.label[lang].toLowerCase()}/` : ''}{current}</p>
         <h1>{entry.data.title}</h1>
         <p class="docs-lede">{entry.data.description}</p>
         <Content />
+        <nav class="docs-pager" aria-label={lang === 'es' ? 'Paginación de documentos' : 'Docs pagination'}>
+          {prev ? (
+            <a class="docs-pager-link prev" href={getRelativeLocaleUrl(lang, `docs/${slugOf(prev)}`)}>
+              <span class="docs-pager-dir">← {t('docs.prev')}</span>
+              <span class="docs-pager-title">{prev.data.title}</span>
+            </a>
+          ) : <span />}
+          {next ? (
+            <a class="docs-pager-link next" href={getRelativeLocaleUrl(lang, `docs/${slugOf(next)}`)}>
+              <span class="docs-pager-dir">{t('docs.next')} →</span>
+              <span class="docs-pager-title">{next.data.title}</span>
+            </a>
+          ) : <span />}
+        </nav>
       </article>
+      {toc.length > 0 && (
+        <aside class="docs-toc">
+          <p class="docs-toc-label">{t('docs.toc')}</p>
+          <ul>
+            {toc.map((h) => (
+              <li class={h.depth === 3 ? 'toc-sub' : ''}>
+                <a href={`#${h.slug}`}>{h.text}</a>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      )}
     </div>
   </main>
   <Footer lang={lang} />
+  <CommandPalette lang={lang} />
+
+  <script>
+    function initDocs() {
+      // Mobile sidebar toggle
+      const toggle = document.querySelector<HTMLElement>('[data-docs-toggle]');
+      const side = document.getElementById('docs-side');
+      if (toggle && side && !toggle.dataset.bound) {
+        toggle.dataset.bound = '1';
+        toggle.addEventListener('click', () => {
+          const open = side.classList.toggle('open');
+          toggle.setAttribute('aria-expanded', String(open));
+        });
+        side.addEventListener('click', (e) => {
+          if ((e.target as HTMLElement).closest('a')) {
+            side.classList.remove('open');
+            toggle.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+
+      // On-this-page scroll spy
+      const links = document.querySelectorAll<HTMLAnchorElement>('.docs-toc a');
+      if (!links.length) return;
+      const heads = [...links]
+        .map((a) => document.getElementById((a.getAttribute('href') ?? '').slice(1)))
+        .filter((s): s is HTMLElement => s !== null);
+      if (!heads.length) return;
+
+      const spy = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            links.forEach((l) =>
+              l.classList.toggle('active', l.getAttribute('href') === `#${entry.target.id}`)
+            );
+          }
+        },
+        { rootMargin: '-10% 0px -75% 0px' }
+      );
+      heads.forEach((s) => spy.observe(s));
+    }
+
+    initDocs();
+    document.addEventListener('astro:page-load', initDocs);
+  </script>
 </Base>

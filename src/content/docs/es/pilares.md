@@ -31,3 +31,6 @@ Las piezas compartidas viven **una vez** y se componen en todos lados:
 - Una sola fuente de verdad por regla de negocio.
 
 > Si una pieza se usa dos veces, se extrae. Nada se duplica.
+
+Tres pilares, un objetivo: que el sistema **crezca sin volverse frágil** —
+que el módulo veinte se enchufe sin tocar al módulo uno.

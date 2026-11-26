@@ -15,13 +15,17 @@ export const docsGroups: DocsGroup[] = [
       'modulos',
       'estructura-plugin',
       'pipeline',
-      'aplicar',
-      'frameworks',
+      'flujo-de-trabajo',
+      'escalabilidad',
     ],
   },
   {
+    label: { es: 'En la práctica', en: 'In practice' },
+    slugs: ['aplicar', 'frameworks', 'ejemplo-plugin', 'ejemplos-web'],
+  },
+  {
     label: { es: 'Referencia', en: 'Reference' },
-    slugs: ['principios', 'antipatrones', 'checklist'],
+    slugs: ['principios', 'seguridad', 'antipatrones', 'checklist'],
   },
   {
     label: { es: 'Ecosistema', en: 'Ecosystem' },

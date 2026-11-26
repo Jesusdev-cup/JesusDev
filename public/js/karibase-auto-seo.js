@@ -38,6 +38,7 @@ class AutoSEO {
   }
 
   extractPageData() {
+    const wordCount = this.countWords()
     return {
       title: document.title || '',
       description: this.getMetaContent('description') || this.extractDescription(),
@@ -50,8 +51,8 @@ class AutoSEO {
       images: this.extractImages(),
       headings: this.extractHeadings(),
       links: this.extractLinks(),
-      wordCount: this.countWords(),
-      readingTime: this.calculateReadingTime()
+      wordCount,
+      readingTime: this.calculateReadingTime(wordCount)
     }
   }
 
@@ -123,9 +124,10 @@ class AutoSEO {
     return text.trim().split(/\s+/).length
   }
 
-  calculateReadingTime() {
+  calculateReadingTime(wordCount) {
     const wordsPerMinute = 200
-    const minutes = Math.ceil(this.pageData.wordCount / wordsPerMinute)
+    const count = wordCount ?? this.pageData?.wordCount ?? 0
+    const minutes = Math.ceil(count / wordsPerMinute)
     return minutes
   }
 

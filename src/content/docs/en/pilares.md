@@ -31,3 +31,6 @@ Shared pieces live **once** and get composed everywhere:
 - A single source of truth per business rule.
 
 > If a piece is used twice, it gets extracted. Nothing is duplicated.
+
+Three pillars, one goal: a system that **grows without getting fragile** —
+where module twenty plugs in without touching module one.

@@ -40,3 +40,8 @@ touches another domain's tables.
 
 - Every flow records health, duration and errors — no magic automation.
 - Flows call the contract endpoints; they never write data from behind.
+
+## See it in code
+
+The same method written for real: [Applied example · Plugin](/JesusDev/en/docs/ejemplo-plugin)
+and [Examples across web frameworks](/JesusDev/en/docs/ejemplos-web).

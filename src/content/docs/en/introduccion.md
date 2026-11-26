@@ -18,13 +18,18 @@ hand with the same method.
 
 ## What you will find here
 
-- **Guide** — the core concepts: pillars, stack, modules and the pipeline.
-- **Reference** — principles, anti-patterns and the adoption checklist.
+- **Guide** — the core concepts: pillars, stack, modules, the pipeline,
+  the working flow and how the method scales.
+- **In practice** — the method applied with code: WordPress plugin, web
+  frameworks and every project type.
+- **Reference** — principles, security, anti-patterns and the adoption
+  checklist.
 - **Ecosystem** — where the method is applied in production.
 
 ## When to apply it
 
-yohacase fits any project meant to **live in production for years**: WordPress
+yohacase fits any project meant to **live and grow in production for
+years**: WordPress
 plugins, intranets, browser extensions, automations and static sites. If the
 project is disposable, the method is overhead — its value shows up in
 maintenance, not in the first commit.

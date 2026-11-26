@@ -39,3 +39,8 @@ nunca toca la base de datos del otro dominio.
 
 - Todo flujo registra health, duración y errores — ninguna automatización es magia.
 - Los flujos llaman a los endpoints del contrato; no escriben datos por detrás.
+
+## Verlo en código
+
+El mismo método escrito de verdad: [Ejemplo aplicado · Plugin](/JesusDev/docs/ejemplo-plugin)
+y [Ejemplos en frameworks web](/JesusDev/docs/ejemplos-web).

@@ -18,13 +18,18 @@ construido a mano con el mismo método.
 
 ## Qué encontrarás aquí
 
-- **Guía** — los conceptos centrales: pilares, stack, módulos y el pipeline.
-- **Referencia** — principios, anti-patrones y el checklist de adopción.
+- **Guía** — los conceptos centrales: pilares, stack, módulos, pipeline,
+  flujo de trabajo y cómo escala el método.
+- **En la práctica** — el método aplicado con código: plugin de WordPress,
+  frameworks web y cada tipo de proyecto.
+- **Referencia** — principios, seguridad, anti-patrones y el checklist de
+  adopción.
 - **Ecosistema** — dónde está aplicado el método en producción.
 
 ## Cuándo aplicarlo
 
-yohacase aplica a cualquier proyecto que deba **vivir años en producción**:
+yohacase aplica a cualquier proyecto que deba **vivir y crecer años en
+producción**:
 plugins de WordPress, intranets, extensiones de navegador, automatizaciones y
 sitios estáticos. Si el proyecto es descartable, el método es overhead — su
 valor aparece en el mantenimiento, no en el primer commit.

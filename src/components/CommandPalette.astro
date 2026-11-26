@@ -1,6 +1,8 @@
 ---
 import { getRelativeLocaleUrl } from 'astro:i18n';
+import { getCollection } from 'astro:content';
 import { projects } from '../data/projects';
+import { docsGroups } from '../data/docsNav';
 import { useTranslations, type Lang } from '../i18n/ui';
 
 interface Props {
@@ -9,6 +11,19 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+
+const prefix = lang === 'en' ? 'en/' : 'es/';
+const docs = await getCollection('docs', ({ id }) => id.startsWith(prefix));
+const docItems = docsGroups.flatMap((g) =>
+  g.slugs
+    .map((s) => docs.find((d) => d.id === `${prefix}${s}`))
+    .filter((d) => d !== undefined)
+    .map((d) => ({
+      label: d.data.title,
+      href: getRelativeLocaleUrl(lang, `docs/${d.id.slice(prefix.length)}`),
+      group: g.label[lang],
+    }))
+);
 
 const items = [
   ...(['about', 'experience', 'projects', 'skills', 'contact'] as const).map((a) => ({
@@ -26,6 +41,7 @@ const items = [
     href: getRelativeLocaleUrl(lang, 'docs'),
     group: t('cmdk.nav'),
   },
+  ...docItems,
   ...projects.map((p) => ({
     label: p.name,
     href: getRelativeLocaleUrl(lang, `work/${p.name}`),

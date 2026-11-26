@@ -440,6 +440,10 @@ export const checklist: Record<Lang, string>[] = [
     es: '¿Diagnósticos y audit logs incluidos desde el día uno?',
     en: 'Are diagnostics and audit logs included from day one?',
   },
+  {
+    es: '¿El siguiente módulo se enchufa sin tocar los existentes?',
+    en: 'Does the next module plug in without touching the existing ones?',
+  },
 ];
 
 export interface AppliedProject {
