@@ -6,7 +6,7 @@ sidebar: Web examples
 
 The mold does not change — what changes is the equivalent of "module",
 "contract" and "hook" in each runtime. The same `time-entries` domain,
-eleven times.
+twelve times.
 
 ## Front-end
 
@@ -63,39 +63,55 @@ export class EntriesService {
 }
 ```
 
-A global interceptor adds auth and normalizes the error shape — same as
-`permission_callback` + the contract error in WordPress.
-
-### Svelte — a store per domain
+A global functional interceptor adds auth and normalizes the error shape —
+same as `permission_callback` + the contract error in WordPress:
 
 ```ts
-// features/time-entries/store.ts — the store is the domain
-function createEntries() {
-  const { subscribe } = writable<TimeEntry[]>([]);
-  return {
-    subscribe,
-    create: (e: NewEntry) =>
-      api.post('/time-entries', e, {
-        headers: { 'X-Request-Id': crypto.randomUUID() },
-      }),
-  };
-}
-export const entries = createEntries();
+// app.config.ts — registered once, covers every domain
+export const reqIdInterceptor: HttpInterceptorFn = (req, next) =>
+  next(req.clone({ setHeaders: { 'X-Request-Id': crypto.randomUUID() } }));
+
+provideHttpClient(withInterceptors([reqIdInterceptor]));
 ```
 
-The component reads `$entries` and calls `entries.create()` — every mutation
-goes through the domain, never through an ad-hoc fetch.
+### Svelte — domain state with runes
+
+```ts
+// features/time-entries/entries.svelte.ts — the class IS the domain
+class EntriesStore {
+  list = $state<TimeEntry[]>([]);
+
+  async create(e: NewEntry) {
+    const entry = await api.post<TimeEntry>('/time-entries', e, {
+      headers: { 'X-Request-Id': crypto.randomUUID() },
+    });
+    this.list.push(entry);
+    return entry;
+  }
+}
+export const entries = new EntriesStore();
+```
+
+The component reads `entries.list` (reactive via the `$state` rune) and
+calls `entries.create()` — every mutation goes through the domain, never
+through an ad-hoc fetch.
 
 ### Qwik — the contract lives in the route
 
 ```tsx
-// routes/time-entries/index.tsx — loaders and actions are the contract
-export const useCreateEntry = routeAction$(async (data, { request }) => {
-  return entries.create(data); // runs on the server: pure domain
-});
+// routes/time-entries/index.tsx — the action is the validated contract
+export const useCreateEntry = routeAction$(
+  async (data, requestEvent) => {
+    // runs on the server: pure domain, same request id deduplicated
+    const id = requestEvent.request.headers.get('X-Request-Id') ?? crypto.randomUUID();
+    return entries.create(data, id);
+  },
+  zod$({ task: z.string(), minutes: z.number().int() }) // schema = contract
+);
 ```
 
-`routeLoader$` and `routeAction$` are the runtime's REST routes: the client
+`routeLoader$` and `routeAction$` are the runtime's REST routes: `zod$` is
+the contract schema, `action.value.error` the error shape — the client
 consumes the contract, never the table.
 
 ## Backend
@@ -103,17 +119,21 @@ consumes the contract, never the table.
 ### Node / Express — router + idempotent middleware
 
 ```ts
+const newEntrySchema = z.object({ task: z.string(), minutes: z.number().int() });
+
 router.post('/time-entries',
   requirePerm('time.write'),
-  idempotent(),
+  validate(newEntrySchema),   // the contract: 400 with error shape on failure
+  idempotent(),               // dedup by Idempotency-Key header
   async (req, res) => {
     const entry = await entries.create(req.body);
     res.status(201).json(entry);
   });
 ```
 
-`idempotent()` dedupes by `Idempotency-Key` header in middleware — the same
-`request_id` rule under a different name.
+The middleware chain is the contract declaration: permission → schema →
+idempotency → domain. `idempotent()` dedupes by `Idempotency-Key` — the
+same `request_id` rule under a different name.
 
 ### Laravel — the mold is the convention
 
@@ -191,7 +211,9 @@ depends on interfaces, not implementations — same as WordPress, but typed.
 ### Astro — the schema is the contract
 
 ```ts
+// src/content.config.ts — the collection declares loader + schema
 const docs = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/docs' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
@@ -216,5 +238,5 @@ const entries = await chrome.runtime.sendMessage<Msg, Entry[]>({
 The service worker is the backend; the popup is just another UI consuming
 the contract.
 
-> Same mold, eleven runtimes: isolated domain, explicit contract, idempotent
+> Same mold, twelve runtimes: isolated domain, explicit contract, idempotent
 > mutation and a UI that only consumes.

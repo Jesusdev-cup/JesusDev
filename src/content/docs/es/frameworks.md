@@ -25,13 +25,14 @@ Los pilares son agnósticos: lo que cambia es el equivalente de "módulo",
 ### Angular
 
 - Dominio = feature standalone con su `Service` inyectable y su estado en signals.
-- Contrato = `HttpClient` tipado por dominio + interceptors (auth, request id,
-  forma de error).
+- Contrato = `HttpClient` tipado por dominio + interceptors funcionales
+  (`HttpInterceptorFn` en `withInterceptors`: auth, request id, error shape).
 - La DI es el "hook" del ecosistema: los módulos se enchufan por providers.
 
 ### Svelte
 
-- Dominio = feature folder con su store por dominio (`stores/entries.ts`).
+- Dominio = feature folder con su estado por dominio (`entries.svelte.ts`
+  con runas `$state`).
 - Contrato = `load` y `+server.ts` tipados en SvelteKit — el contrato vive en
   la ruta.
 - Componentes compartidos en `lib/` — se importan, no se duplican.
@@ -40,6 +41,8 @@ Los pilares son agnósticos: lo que cambia es el equivalente de "módulo",
 
 - Dominio = feature con `routeLoader$` / `routeAction$` — el contrato está en
   la ruta misma.
+- Schema = `zod$` adjunto a la action; errores de validación llegan por
+  `action.value.error`.
 - Resumibilidad = la misma regla de Astro: JS solo donde aporta.
 - `server$` es la función pública del dominio — el cliente nunca escribe directo.
 

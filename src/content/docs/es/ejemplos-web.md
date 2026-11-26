@@ -5,7 +5,7 @@ sidebar: Ejemplos web
 ---
 
 El molde no cambia — cambia el equivalente de "módulo", "contrato" y "hook"
-en cada runtime. El mismo dominio `time-entries`, once veces.
+en cada runtime. El mismo dominio `time-entries`, doce veces.
 
 ## Front-end
 
@@ -61,39 +61,55 @@ export class EntriesService {
 }
 ```
 
-Un interceptor global añade auth y normaliza la forma de error — igual que
-`permission_callback` + el error del contrato en WordPress.
-
-### Svelte — store por dominio
+Un interceptor funcional global añade auth y normaliza la forma de error —
+igual que `permission_callback` + el error del contrato en WordPress:
 
 ```ts
-// features/time-entries/store.ts — el store es el dominio
-function createEntries() {
-  const { subscribe } = writable<TimeEntry[]>([]);
-  return {
-    subscribe,
-    create: (e: NewEntry) =>
-      api.post('/time-entries', e, {
-        headers: { 'X-Request-Id': crypto.randomUUID() },
-      }),
-  };
-}
-export const entries = createEntries();
+// app.config.ts — se registra una vez, cubre todos los dominios
+export const reqIdInterceptor: HttpInterceptorFn = (req, next) =>
+  next(req.clone({ setHeaders: { 'X-Request-Id': crypto.randomUUID() } }));
+
+provideHttpClient(withInterceptors([reqIdInterceptor]));
 ```
 
-El componente lee `$entries` y llama `entries.create()` — la mutación siempre
-pasa por el dominio, nunca por un fetch improvisado.
+### Svelte — estado por dominio con runes
+
+```ts
+// features/time-entries/entries.svelte.ts — la clase ES el dominio
+class EntriesStore {
+  list = $state<TimeEntry[]>([]);
+
+  async create(e: NewEntry) {
+    const entry = await api.post<TimeEntry>('/time-entries', e, {
+      headers: { 'X-Request-Id': crypto.randomUUID() },
+    });
+    this.list.push(entry);
+    return entry;
+  }
+}
+export const entries = new EntriesStore();
+```
+
+El componente lee `entries.list` (reactivo por la runa `$state`) y llama
+`entries.create()` — la mutación siempre pasa por el dominio, nunca por un
+fetch improvisado.
 
 ### Qwik — el contrato vive en la ruta
 
 ```tsx
-// routes/time-entries/index.tsx — loaders y actions son el contrato
-export const useCreateEntry = routeAction$(async (data, { request }) => {
-  return entries.create(data); // corre en servidor: dominio puro
-});
+// routes/time-entries/index.tsx — la action es el contrato validado
+export const useCreateEntry = routeAction$(
+  async (data, requestEvent) => {
+    // corre en servidor: dominio puro, mismo request id deduplicado
+    const id = requestEvent.request.headers.get('X-Request-Id') ?? crypto.randomUUID();
+    return entries.create(data, id);
+  },
+  zod$({ task: z.string(), minutes: z.number().int() }) // schema = contrato
+);
 ```
 
-`routeLoader$` y `routeAction$` son las rutas REST del runtime: el cliente
+`routeLoader$` y `routeAction$` son las rutas REST del runtime: `zod$` es el
+schema del contrato, `action.value.error` la forma de error — el cliente
 consume el contrato, nunca la tabla.
 
 ## Backend
@@ -101,17 +117,21 @@ consume el contrato, nunca la tabla.
 ### Node / Express — router + middleware idempotente
 
 ```ts
+const newEntrySchema = z.object({ task: z.string(), minutes: z.number().int() });
+
 router.post('/time-entries',
   requirePerm('time.write'),
-  idempotent(),
+  validate(newEntrySchema),   // el contrato: 400 con forma de error si falla
+  idempotent(),               // dedup por header Idempotency-Key
   async (req, res) => {
     const entry = await entries.create(req.body);
     res.status(201).json(entry);
   });
 ```
 
-`idempotent()` hace dedup por header `Idempotency-Key` en middleware — la
-misma regla del `request_id` con otro nombre.
+Cadena de middleware = la declaración del contrato: permiso → schema →
+idempotencia → dominio. `idempotent()` hace dedup por `Idempotency-Key` —
+la misma regla del `request_id` con otro nombre.
 
 ### Laravel — el molde ya es convención
 
@@ -189,7 +209,9 @@ con tipos.
 ### Astro — el schema es el contrato
 
 ```ts
+// src/content.config.ts — la colección declara loader + schema
 const docs = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/docs' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
@@ -214,5 +236,5 @@ const entries = await chrome.runtime.sendMessage<Msg, Entry[]>({
 El service worker es el backend; el popup, una UI más que consume el
 contrato.
 
-> Mismo molde, once runtimes: dominio aislado, contrato explícito, mutación
+> Mismo molde, doce runtimes: dominio aislado, contrato explícito, mutación
 > idempotente y una UI que solo consume.

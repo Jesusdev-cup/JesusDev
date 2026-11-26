@@ -26,13 +26,14 @@ and "contract" in each ecosystem.
 ### Angular
 
 - Domain = standalone feature with its injectable `Service` and signal state.
-- Contract = domain-typed `HttpClient` + interceptors (auth, request id,
-  error shape).
+- Contract = domain-typed `HttpClient` + functional interceptors
+  (`HttpInterceptorFn` via `withInterceptors`: auth, request id, error shape).
 - DI is the ecosystem's "hook": modules plug in through providers.
 
 ### Svelte
 
-- Domain = feature folder with its domain store (`stores/entries.ts`).
+- Domain = feature folder with its domain state (`entries.svelte.ts` using
+  `$state` runes).
 - Contract = typed `load` and `+server.ts` in SvelteKit — the contract lives
   in the route.
 - Shared components in `lib/` — imported, never duplicated.
@@ -41,6 +42,8 @@ and "contract" in each ecosystem.
 
 - Domain = feature with `routeLoader$` / `routeAction$` — the contract lives
   in the route itself.
+- Schema = `zod$` attached to the action; validation errors arrive via
+  `action.value.error`.
 - Resumability = the same rule as Astro: JS only where it earns its place.
 - `server$` is the domain's public function — the client never writes directly.
 
