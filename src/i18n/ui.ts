@@ -82,6 +82,10 @@ export const ui = {
     'theme.toggle': 'Cambiar tema',
     'nav.method': 'Método',
     'yh.docs': 'Documentación completa →',
+    'yh.doc.more': 'Leer la doc completa',
+    'yh.docs.index': 'Documentación',
+    'yh.docs.sub':
+      'Cada sección de esta página es un resumen — la referencia completa vive en estas páginas.',
     'idx.title': 'Índice',
     'idx.about': 'Quién soy y en qué me especializo.',
     'idx.experience': 'Dónde he trabajado y qué he construido.',
@@ -220,6 +224,10 @@ export const ui = {
     'theme.toggle': 'Toggle theme',
     'nav.method': 'Method',
     'yh.docs': 'Full documentation →',
+    'yh.doc.more': 'Read the full doc',
+    'yh.docs.index': 'Documentation',
+    'yh.docs.sub':
+      'Each section on this page is a summary — the full reference lives on these pages.',
     'idx.title': 'Index',
     'idx.about': 'Who I am and what I specialize in.',
     'idx.experience': "Where I've worked and what I've built.",

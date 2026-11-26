@@ -3007,3 +3007,72 @@ body::after {
   content: '→ ';
   color: var(--green);
 }
+
+/* ---------- Yohacase doc links + docs index ---------- */
+.yh-doc-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--green);
+  margin: -32px 0 40px;
+}
+
+.section-title + .yh-doc-link {
+  margin-top: 0;
+}
+
+.yh-doc-link:hover {
+  text-decoration: underline;
+}
+
+.yh-docs-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin-bottom: 56px;
+}
+
+.yh-docs-group-label {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+
+.yh-docs-group ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.yh-docs-group li a {
+  display: block;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.yh-docs-group li a:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.yh-docs-item-title {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.yh-docs-item-desc {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 2px;
+}

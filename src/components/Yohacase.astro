@@ -1,8 +1,11 @@
 ---
 import { getRelativeLocaleUrl } from 'astro:i18n';
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Nav from './Nav.astro';
 import Footer from './Footer.astro';
+import CommandPalette from './CommandPalette.astro';
+import { docsGroups } from '../data/docsNav';
 import {
   pillars,
   stackLayers,
@@ -26,6 +29,10 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const title = `yohacase — ${t('site.title')}`;
 
+const prefix = lang === 'en' ? 'en/' : 'es/';
+const docs = await getCollection('docs', ({ id }) => id.startsWith(prefix));
+const bySlug = (s: string) => docs.find((d) => d.id === `${prefix}${s}`);
+
 const toc = [
   { id: 'pillars', label: t('yh.pillars') },
   { id: 'stack', label: t('yh.stack') },
@@ -36,6 +43,7 @@ const toc = [
   { id: 'antipatterns', label: t('yh.anti') },
   { id: 'checklist', label: t('yh.checklist') },
   { id: 'applied', label: t('yh.applied') },
+  { id: 'docs', label: t('yh.docs.index') },
 ];
 ---
 
@@ -72,6 +80,9 @@ const toc = [
     <section class="yh-section" id="pillars">
       <div class="container">
         <h2 class="section-title reveal">{t('yh.pillars')}</h2>
+        <a class="yh-doc-link reveal" href={getRelativeLocaleUrl(lang, 'docs/pilares')}>
+          {t('yh.doc.more')} →
+        </a>
         <div class="yh-pillars">
           {pillars.map((p) => (
             <div class="yh-pillar reveal">
@@ -91,6 +102,9 @@ const toc = [
       <div class="container">
         <h2 class="section-title reveal">{t('yh.stack')}</h2>
         <p class="section-sub reveal">{t('yh.stack.sub')}</p>
+        <a class="yh-doc-link reveal" href={getRelativeLocaleUrl(lang, 'docs/stack')}>
+          {t('yh.doc.more')} →
+        </a>
         <div class="yh-stack-wrap reveal">
           <table class="yh-stack">
             <thead>
@@ -116,6 +130,9 @@ const toc = [
       <div class="container">
         <h2 class="section-title reveal">{t('yh.anatomy')}</h2>
         <p class="section-sub reveal">{t('yh.anatomy.sub')}</p>
+        <a class="yh-doc-link reveal" href={getRelativeLocaleUrl(lang, 'docs/modulos')}>
+          {t('yh.doc.more')} →
+        </a>
         <div class="yh-anatomy">
           <div class="yh-owns">
             {moduleOwns.map((m) => (
@@ -141,6 +158,9 @@ const toc = [
     <section class="yh-section" id="principles">
       <div class="container">
         <h2 class="section-title reveal">{t('yh.principles')}</h2>
+        <a class="yh-doc-link reveal" href={getRelativeLocaleUrl(lang, 'docs/principios')}>
+          {t('yh.doc.more')} →
+        </a>
         <ol class="yh-principles">
           {principles.map((p, i) => (
             <li class="yh-principle reveal">
@@ -158,6 +178,9 @@ const toc = [
     <section class="yh-section" id="pipeline">
       <div class="container">
         <h2 class="section-title reveal">{t('yh.pipeline')}</h2>
+        <a class="yh-doc-link reveal" href={getRelativeLocaleUrl(lang, 'docs/pipeline')}>
+          {t('yh.doc.more')} →
+        </a>
         <ol class="yh-pipeline">
           {phases.map((ph, i) => (
             <li class="yh-phase reveal">
@@ -194,6 +217,9 @@ const toc = [
       <div class="container">
         <h2 class="section-title reveal">{t('yh.anti')}</h2>
         <p class="section-sub reveal">{t('yh.anti.sub')}</p>
+        <a class="yh-doc-link reveal" href={getRelativeLocaleUrl(lang, 'docs/antipatrones')}>
+          {t('yh.doc.more')} →
+        </a>
         <div class="yh-anti-grid">
           {antipatterns.map((key) => (
             <div class="yh-anti reveal">
@@ -209,6 +235,9 @@ const toc = [
       <div class="container">
         <h2 class="section-title reveal">{t('yh.checklist')}</h2>
         <p class="section-sub reveal">{t('yh.checklist.sub')}</p>
+        <a class="yh-doc-link reveal" href={getRelativeLocaleUrl(lang, 'docs/checklist')}>
+          {t('yh.doc.more')} →
+        </a>
         <ol class="yh-check">
           {checklist.map((q, i) => (
             <li class="yh-check-item reveal">
@@ -234,6 +263,34 @@ const toc = [
             </li>
           ))}
         </ul>
+      </div>
+    </section>
+
+    <section class="yh-section" id="docs">
+      <div class="container">
+        <h2 class="section-title reveal">{t('yh.docs.index')}</h2>
+        <p class="section-sub reveal">{t('yh.docs.sub')}</p>
+        <div class="yh-docs-groups">
+          {docsGroups.map((g) => (
+            <nav class="yh-docs-group reveal" aria-label={g.label[lang]}>
+              <h3 class="yh-docs-group-label">{g.label[lang]}</h3>
+              <ul>
+                {g.slugs.map((s) => {
+                  const d = bySlug(s);
+                  if (!d) return null;
+                  return (
+                    <li>
+                      <a href={getRelativeLocaleUrl(lang, `docs/${s}`)}>
+                        <span class="yh-docs-item-title">{d.data.title}</span>
+                        <span class="yh-docs-item-desc">{d.data.description}</span>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+          ))}
+        </div>
 
         <div class="yh-cta reveal">
           <h3>{t('yh.cta.title')}</h3>
@@ -246,6 +303,7 @@ const toc = [
     </section>
   </main>
   <Footer lang={lang} />
+  <CommandPalette lang={lang} />
 </Base>
 
 <script>

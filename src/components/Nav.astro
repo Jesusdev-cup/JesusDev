@@ -20,7 +20,8 @@ let rel = Astro.url.pathname.startsWith(base)
 rel = rel.replace(/^\//, '').replace(/\/$/, '');
 const route = lang === 'en' ? rel.replace(/^en\/?/, '') : rel;
 const segment = route.split('/')[0];
-const activeKey = segment === 'work' ? 'projects' : segment;
+const activeKey =
+  segment === 'work' ? 'projects' : segment === 'docs' ? 'yohacase' : segment;
 ---
 
 <header class="nav">
