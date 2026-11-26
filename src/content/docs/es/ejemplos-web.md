@@ -11,6 +11,8 @@ en cada runtime. El mismo dominio `time-entries`, doce veces.
 
 ### React — feature + contrato tipado
 
+> Ejemplo funcional: [`public/examples/web/react/`](/JesusDev/examples/web/react/README.md) — componentes, contexto, hooks, test.
+
 ```
 src/
 ├── features/time-entries/
@@ -30,6 +32,8 @@ export const createEntry = (body: NewEntry, requestId: string) =>
 
 ### Vue — composable por dominio
 
+> Ejemplo funcional: [`public/examples/web/vue/`](/JesusDev/examples/web/vue/README.md) — composable, provide/inject, router, test.
+
 ```ts
 // features/time-entries/useEntries.ts — el dominio vive en un composable
 export function useEntries() {
@@ -46,6 +50,8 @@ El composable es el módulo: posee el estado del dominio y expone funciones
 públicas. Otro dominio no toca `list` — pide por la función.
 
 ### Angular — servicio por dominio + interceptor
+
+> Ejemplo funcional: [`public/examples/web/angular/`](/JesusDev/examples/web/angular/README.md) — los 12 temas oficiales: signal forms, interceptor, routing, SSR, Aria, i18n, animaciones, test.
 
 ```ts
 // features/time-entries/entries.service.ts — el dominio es un servicio
@@ -74,6 +80,8 @@ provideHttpClient(withInterceptors([reqIdInterceptor]));
 
 ### Svelte — estado por dominio con runes
 
+> Ejemplo funcional: [`public/examples/web/svelte/`](/JesusDev/examples/web/svelte/README.md) — runes, SvelteKit `load` + form actions, test.
+
 ```ts
 // features/time-entries/entries.svelte.ts — la clase ES el dominio
 class EntriesStore {
@@ -96,6 +104,8 @@ fetch improvisado.
 
 ### Qwik — el contrato vive en la ruta
 
+> Ejemplo funcional: [`public/examples/web/qwik/`](/JesusDev/examples/web/qwik/README.md) — `routeLoader$`, `routeAction$` + `zod$`, `server$`, componentes.
+
 ```tsx
 // routes/time-entries/index.tsx — la action es el contrato validado
 export const useCreateEntry = routeAction$(
@@ -116,6 +126,8 @@ consume el contrato, nunca la tabla.
 
 ### Node / Express — router + middleware idempotente
 
+> Ejemplo funcional: [`public/examples/web/express/`](/JesusDev/examples/web/express/README.md) — dominio puro, middleware chain, error boundary.
+
 ```ts
 const newEntrySchema = z.object({ task: z.string(), minutes: z.number().int() });
 
@@ -134,6 +146,8 @@ idempotencia → dominio. `idempotent()` hace dedup por `Idempotency-Key` —
 la misma regla del `request_id` con otro nombre.
 
 ### Laravel — el molde ya es convención
+
+> Ejemplo funcional: [`public/examples/web/laravel/`](/JesusDev/examples/web/laravel/README.md) — Form Request, Policy, middleware idempotencia, migration, feature test.
 
 ```php
 // app/Domain/TimeEntries/CreateEntryRequest.php — el contrato
@@ -155,6 +169,8 @@ Form Request = contrato, Policy = matriz única, `app/Domain/` = módulos.
 
 ### Symfony — voter como matriz única
 
+> Ejemplo funcional: [`public/examples/web/symfony/`](/JesusDev/examples/web/symfony/README.md) — `#[IsGranted]` + voter, `#[MapRequestPayload]` DTO, feature test.
+
 ```php
 // src/Domain/TimeEntries/EntryController.php
 #[Route('/api/time-entries', methods: ['POST'])]
@@ -171,6 +187,8 @@ El DTO validado es el schema; el `400` automático es la forma de error.
 
 ### Go — el compilador hace cumplir el límite
 
+> Ejemplo funcional: [`public/examples/web/go/`](/JesusDev/examples/web/go/README.md) — `internal/` + ServeMux + `httptest`, compilable con `go build`.
+
 ```go
 // internal/entries/handler.go — internal/ impone la frontera
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
@@ -186,6 +204,8 @@ Un package en `internal/` no se puede importar desde fuera — los límites del
 módulo los enforcea el toolchain, no la disciplina.
 
 ### Plugin PHP (Composer) — contratos + eventos
+
+> Ejemplo funcional: [`public/examples/web/php-composer/`](/JesusDev/examples/web/php-composer/README.md) — PSR-4 + contratos + eventos PSR-14 + PHPUnit.
 
 ```php
 // src/Contracts/EntryStore.php — el contrato del paquete
@@ -208,6 +228,8 @@ con tipos.
 
 ### Astro — el schema es el contrato
 
+> Ejemplo funcional: [`public/examples/web/astro/`](/JesusDev/examples/web/astro/README.md) — colección + actions + endpoint + middleware + i18n.
+
 ```ts
 // src/content.config.ts — la colección declara loader + schema
 const docs = defineCollection({
@@ -224,6 +246,8 @@ Los datos inválidos fallan en build — el contrato se verifica antes de
 desplegar, no en runtime. Esta misma documentación corre sobre esa idea.
 
 ### MV3 — mensajes como contrato interno
+
+> Ejemplo funcional: [`public/examples/web/mv3/`](/JesusDev/examples/web/mv3/README.md) — manifest, service worker, popup, mensajes tipados.
 
 ```ts
 // el popup nunca lee storage ajeno: pide por mensaje tipado

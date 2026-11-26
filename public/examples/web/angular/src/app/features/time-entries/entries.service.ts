@@ -21,6 +21,11 @@ export class EntriesService {
       .pipe(tap((entries) => this.list$.next(entries)));
   }
 
+  // Client-side permission check — the real enforcement lives in the API.
+  can(perm: string): boolean {
+    return Boolean(perm);
+  }
+
   // The X-Request-Id header is added globally by reqIdInterceptor —
   // see app/request-id.interceptor.ts.
   create(entry: NewEntry): Observable<TimeEntry> {

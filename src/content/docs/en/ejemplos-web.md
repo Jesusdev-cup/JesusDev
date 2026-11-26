@@ -12,6 +12,8 @@ twelve times.
 
 ### React — feature + typed contract
 
+> Working example: [`public/examples/web/react/`](/JesusDev/examples/web/react/README.md) — components, context, hooks, test.
+
 ```
 src/
 ├── features/time-entries/
@@ -31,6 +33,8 @@ export const createEntry = (body: NewEntry, requestId: string) =>
 
 ### Vue — a composable per domain
 
+> Working example: [`public/examples/web/vue/`](/JesusDev/examples/web/vue/README.md) — composable, provide/inject, router, test.
+
 ```ts
 // features/time-entries/useEntries.ts — the domain lives in a composable
 export function useEntries() {
@@ -48,6 +52,8 @@ functions. Another domain never touches `list` — it asks through the
 function.
 
 ### Angular — a service per domain + interceptor
+
+> Working example: [`public/examples/web/angular/`](/JesusDev/examples/web/angular/README.md) — all 12 official topics: signal forms, interceptor, routing, SSR, Aria, i18n, animations, test.
 
 ```ts
 // features/time-entries/entries.service.ts — the domain is a service
@@ -76,6 +82,8 @@ provideHttpClient(withInterceptors([reqIdInterceptor]));
 
 ### Svelte — domain state with runes
 
+> Working example: [`public/examples/web/svelte/`](/JesusDev/examples/web/svelte/README.md) — runes, SvelteKit `load` + form actions, test.
+
 ```ts
 // features/time-entries/entries.svelte.ts — the class IS the domain
 class EntriesStore {
@@ -98,6 +106,8 @@ through an ad-hoc fetch.
 
 ### Qwik — the contract lives in the route
 
+> Working example: [`public/examples/web/qwik/`](/JesusDev/examples/web/qwik/README.md) — `routeLoader$`, `routeAction$` + `zod$`, `server$`, components.
+
 ```tsx
 // routes/time-entries/index.tsx — the action is the validated contract
 export const useCreateEntry = routeAction$(
@@ -118,6 +128,8 @@ consumes the contract, never the table.
 
 ### Node / Express — router + idempotent middleware
 
+> Working example: [`public/examples/web/express/`](/JesusDev/examples/web/express/README.md) — pure domain, middleware chain, error boundary.
+
 ```ts
 const newEntrySchema = z.object({ task: z.string(), minutes: z.number().int() });
 
@@ -136,6 +148,8 @@ idempotency → domain. `idempotent()` dedupes by `Idempotency-Key` — the
 same `request_id` rule under a different name.
 
 ### Laravel — the mold is the convention
+
+> Working example: [`public/examples/web/laravel/`](/JesusDev/examples/web/laravel/README.md) — Form Request, Policy, idempotency middleware, migration, feature test.
 
 ```php
 // app/Domain/TimeEntries/CreateEntryRequest.php — the contract
@@ -157,6 +171,8 @@ Form Request = contract, Policy = single matrix, `app/Domain/` = modules.
 
 ### Symfony — the voter as the single matrix
 
+> Working example: [`public/examples/web/symfony/`](/JesusDev/examples/web/symfony/README.md) — `#[IsGranted]` + voter, `#[MapRequestPayload]` DTO, feature test.
+
 ```php
 // src/Domain/TimeEntries/EntryController.php
 #[Route('/api/time-entries', methods: ['POST'])]
@@ -174,6 +190,8 @@ shape.
 
 ### Go — the compiler enforces the boundary
 
+> Working example: [`public/examples/web/go/`](/JesusDev/examples/web/go/README.md) — `internal/` + ServeMux + `httptest`, compiles with `go build`.
+
 ```go
 // internal/entries/handler.go — internal/ enforces the frontier
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
@@ -189,6 +207,8 @@ A package under `internal/` cannot be imported from outside — the module
 boundaries are enforced by the toolchain, not by discipline.
 
 ### PHP plugin (Composer) — contracts + events
+
+> Working example: [`public/examples/web/php-composer/`](/JesusDev/examples/web/php-composer/README.md) — PSR-4 + contracts + PSR-14 events + PHPUnit.
 
 ```php
 // src/Contracts/EntryStore.php — the package contract
@@ -210,6 +230,8 @@ depends on interfaces, not implementations — same as WordPress, but typed.
 
 ### Astro — the schema is the contract
 
+> Working example: [`public/examples/web/astro/`](/JesusDev/examples/web/astro/README.md) — collection + actions + endpoint + middleware + i18n.
+
 ```ts
 // src/content.config.ts — the collection declares loader + schema
 const docs = defineCollection({
@@ -226,6 +248,8 @@ Invalid data fails at build time — the contract gets verified before
 deploying, not at runtime. This very documentation runs on that idea.
 
 ### MV3 — messages as the internal contract
+
+> Working example: [`public/examples/web/mv3/`](/JesusDev/examples/web/mv3/README.md) — manifest, service worker, popup, typed messages.
 
 ```ts
 // the popup never reads another domain's storage: it asks via typed message

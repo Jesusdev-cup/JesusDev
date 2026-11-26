@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- i18n: extraction output (ng extract-i18n). The i18n attributes in the
+     components mark the strings; this file carries the translations. -->
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" target-language="es" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="entries.title" datatype="html">
+        <source>Time entries</source>
+        <target>Registros de tiempo</target>
+      </trans-unit>
+      <trans-unit id="entries.empty" datatype="html">
+        <source>No entries yet.</source>
+        <target>Aún no hay registros.</target>
+      </trans-unit>
+      <trans-unit id="entries.total" datatype="html">
+        <source>Total: {$INTERPOLATION}min</source>
+        <target>Total: {$INTERPOLATION}min</target>
+      </trans-unit>
+      <trans-unit id="entry.task" datatype="html">
+        <source>Task</source>
+        <target>Tarea</target>
+      </trans-unit>
+      <trans-unit id="entry.minutes" datatype="html">
+        <source>Minutes</source>
+        <target>Minutos</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
