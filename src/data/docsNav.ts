@@ -21,7 +21,7 @@ export const docsGroups: DocsGroup[] = [
   },
   {
     label: { es: 'En la práctica', en: 'In practice' },
-    slugs: ['aplicar', 'frameworks', 'ejemplo-plugin', 'ejemplos-web'],
+    slugs: ['aplicar', 'frameworks', 'ejemplo-plugin', 'ejemplos-web', 'ejemplos-plugins'],
   },
   {
     label: { es: 'Referencia', en: 'Reference' },
