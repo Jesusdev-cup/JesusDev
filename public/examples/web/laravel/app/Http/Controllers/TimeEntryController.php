@@ -19,9 +19,12 @@ class TimeEntryController extends Controller
     {
         $this->authorize('viewAny', \App\Domain\TimeEntries\TimeEntry::class);
 
-        $day = $request->query('day', now()->toDateString());
+        // Query params are validated too — the contract is closed both ways.
+        $validated = $request->validate([
+            'day' => 'sometimes|date_format:Y-m-d',
+        ]);
 
-        return response()->json($this->entries->listForDay($day));
+        return response()->json($this->entries->listForDay($validated['day'] ?? now()->toDateString()));
     }
 
     public function store(CreateEntryRequest $request): JsonResponse

@@ -6,12 +6,20 @@
   let minutes = $state(30);
   let pending = $state(false);
 
+  // Client-side bounds mirror the server contract.
+  const TASK_MAX = 255;
+  const MINUTES_MAX = 1440;
+
   async function submit(e: SubmitEvent) {
     e.preventDefault();
-    if (!task.trim() || pending) return;
+    const value = task.trim();
+    if (!value || value.length > TASK_MAX || !Number.isInteger(minutes) ||
+        minutes < 1 || minutes > MINUTES_MAX || pending) {
+      return;
+    }
     pending = true;
     try {
-      await entries.create({ task: task.trim(), minutes });
+      await entries.create({ task: value, minutes });
       task = '';
       minutes = 30;
     } finally {
@@ -21,8 +29,8 @@
 </script>
 
 <form onsubmit={submit}>
-  <input bind:value={task} placeholder="Task" required />
-  <input bind:value={minutes} type="number" min="1" required />
+  <input bind:value={task} placeholder="Task" maxlength={TASK_MAX} autocomplete="off" required />
+  <input bind:value={minutes} type="number" min="1" max={MINUTES_MAX} required />
   <button type="submit" disabled={pending}>
     {pending ? 'Saving…' : 'Add entry'}
   </button>

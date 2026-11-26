@@ -9,11 +9,19 @@ const task = ref('');
 const minutes = ref(30);
 const pending = ref(false);
 
+// Client-side bounds mirror the server contract.
+const TASK_MAX = 255;
+const MINUTES_MAX = 1440;
+
 async function submit() {
-  if (!task.value.trim() || pending.value) return;
+  const value = task.value.trim();
+  if (!value || value.length > TASK_MAX || !Number.isInteger(minutes.value) ||
+      minutes.value < 1 || minutes.value > MINUTES_MAX || pending.value) {
+    return;
+  }
   pending.value = true;
   try {
-    await create({ task: task.value.trim(), minutes: minutes.value });
+    await create({ task: value, minutes: minutes.value });
     task.value = '';
     minutes.value = 30;
   } finally {
@@ -24,8 +32,8 @@ async function submit() {
 
 <template>
   <form @submit.prevent="submit">
-    <input v-model="task" placeholder="Task" required />
-    <input v-model.number="minutes" type="number" min="1" required />
+    <input v-model="task" placeholder="Task" :maxlength="TASK_MAX" autocomplete="off" required />
+    <input v-model.number="minutes" type="number" min="1" :max="MINUTES_MAX" required />
     <button type="submit" :disabled="pending">
       {{ pending ? 'Saving…' : 'Add entry' }}
     </button>

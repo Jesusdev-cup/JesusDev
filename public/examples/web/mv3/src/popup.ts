@@ -15,9 +15,21 @@ const form = document.getElementById('form') as HTMLFormElement;
 async function render() {
   const day = new Date().toISOString().slice(0, 10);
   const entries = await send<TimeEntry[]>({ type: 'entries.list', payload: { day } });
-  list.innerHTML = entries
-    .map((e) => `<li>${e.task} — ${e.minutes}min</li>`)
-    .join('') || '<li>No entries yet.</li>';
+
+  // No innerHTML: entry text goes through textContent only —
+  // domain data can never become markup.
+  list.replaceChildren();
+  if (entries.length === 0) {
+    const li = document.createElement('li');
+    li.textContent = 'No entries yet.';
+    list.append(li);
+    return;
+  }
+  for (const e of entries) {
+    const li = document.createElement('li');
+    li.textContent = `${e.task} — ${e.minutes}min`;
+    list.append(li);
+  }
 }
 
 form.addEventListener('submit', async (e) => {

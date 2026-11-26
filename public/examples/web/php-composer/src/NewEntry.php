@@ -7,7 +7,8 @@ namespace Arc\TimeEntries;
 use InvalidArgumentException;
 
 /**
- * The schema of the contract — validated at construction.
+ * The schema of the contract — fully bounded at construction.
+ * The domain can never hold an out-of-contract value.
  */
 final class NewEntry
 {
@@ -18,8 +19,11 @@ final class NewEntry
         if (trim($task) === '') {
             throw new InvalidArgumentException('task is required');
         }
-        if ($minutes < 1) {
-            throw new InvalidArgumentException('minutes must be >= 1');
+        if (strlen($task) > 255) {
+            throw new InvalidArgumentException('task must be at most 255 chars');
+        }
+        if ($minutes < 1 || $minutes > 1440) {
+            throw new InvalidArgumentException('minutes must be between 1 and 1440');
         }
     }
 }

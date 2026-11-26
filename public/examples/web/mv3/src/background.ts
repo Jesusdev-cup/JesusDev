@@ -1,7 +1,8 @@
 // src/background.ts — the service worker IS the backend.
 // It owns storage and answers the typed message contract.
 
-import type { Msg, MsgResponse, TimeEntry } from './messages';
+import { isMsg } from './messages';
+import type { MsgResponse, TimeEntry } from './messages';
 
 const seen = new Map<string, TimeEntry>();
 
@@ -30,25 +31,25 @@ async function createEntry(
 }
 
 // The contract router: validates the message before touching the domain.
-chrome.runtime.onMessage.addListener((msg: Msg, _sender, sendResponse) => {
+// isMsg is the runtime gate — anything that isn't a fully-valid contract
+// message is refused before a single byte of storage is read.
+chrome.runtime.onMessage.addListener((msg: unknown, _sender, sendResponse) => {
   const respond = (r: MsgResponse) => sendResponse(r);
 
   (async () => {
     try {
+      if (!isMsg(msg)) {
+        respond({
+          ok: false,
+          error: { code: 'invalid_msg', message: 'Message failed contract validation' },
+        });
+        return;
+      }
       if (msg.type === 'entries.list') {
         respond({ ok: true, data: await listEntries(msg.payload.day) });
-      } else if (msg.type === 'entries.create') {
-        const { task, minutes } = msg.payload;
-        if (!task?.trim() || !Number.isInteger(minutes) || minutes < 1) {
-          respond({
-            ok: false,
-            error: { code: 'invalid_entry', message: 'Invalid entry' },
-          });
-          return;
-        }
-        respond({ ok: true, data: await createEntry(msg.payload, msg.requestId) });
       } else {
-        respond({ ok: false, error: { code: 'unknown_msg', message: 'Unknown message' } });
+        // isMsg already guaranteed payload is a valid NewEntry + requestId.
+        respond({ ok: true, data: await createEntry(msg.payload, msg.requestId) });
       }
     } catch {
       respond({ ok: false, error: { code: 'internal', message: 'Something went wrong' } });

@@ -21,9 +21,12 @@ export class EntriesService {
       .pipe(tap((entries) => this.list$.next(entries)));
   }
 
-  // Client-side permission check — the real enforcement lives in the API.
+  // Client-side permission check against the user's permission set
+  // (populated at login from the API). The real enforcement is server-side.
+  private permissions = new Set<string>(['time.read', 'time.write']);
+
   can(perm: string): boolean {
-    return Boolean(perm);
+    return this.permissions.has(perm);
   }
 
   // The X-Request-Id header is added globally by reqIdInterceptor —

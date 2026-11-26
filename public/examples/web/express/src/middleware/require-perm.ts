@@ -10,7 +10,14 @@ interface AuthedRequest extends Request {
 
 export const requirePerm = (perm: string) =>
   (req: AuthedRequest, res: Response, next: NextFunction) => {
-    if (!req.user?.permissions.includes(perm)) {
+    // 401 when there's no principal, 403 when it lacks the permission.
+    if (!req.user) {
+      res.status(401).json({
+        error: { code: 'unauthenticated', message: 'Authentication required' },
+      });
+      return;
+    }
+    if (!req.user.permissions.includes(perm)) {
       res.status(403).json({
         error: { code: 'forbidden', message: `Missing permission: ${perm}` },
       });

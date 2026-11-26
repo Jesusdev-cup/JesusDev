@@ -5,7 +5,9 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const reqIdInterceptor: HttpInterceptorFn = (req, next) => {
-  const headers: Record<string, string> = {};
+  const headers: Record<string, string> = {
+    Accept: 'application/json',
+  };
 
   // Idempotent mutations: the server dedups by this header, so a retry
   // returns the stored response instead of a duplicate.

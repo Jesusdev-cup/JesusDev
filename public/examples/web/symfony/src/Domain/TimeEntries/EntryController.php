@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\TimeEntries;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,7 +24,11 @@ final class EntryController extends AbstractController
     #[IsGranted('TIME_READ')]
     public function index(Request $request): JsonResponse
     {
+        // Query params are validated too — the contract is closed both ways.
         $day = $request->query->get('day', date('Y-m-d'));
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $day)) {
+            return $this->json(['error' => 'day must be YYYY-MM-DD'], 400);
+        }
 
         return $this->json($this->entries->listForDay($day));
     }

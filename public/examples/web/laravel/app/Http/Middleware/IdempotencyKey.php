@@ -21,7 +21,15 @@ class IdempotencyKey
 
         $key = $request->header('Idempotency-Key') ?? $request->header('X-Request-Id');
         if (!$key) {
-            return $next($request);
+            // Mandatory: retries of a write must be dedupable by contract.
+            return response()->json([
+                'message' => 'Idempotency-Key header is required for mutations.',
+            ], 400);
+        }
+        if (strlen($key) > 128 || !preg_match('/^[\w\-:.]+$/', $key)) {
+            return response()->json([
+                'message' => 'Idempotency-Key must be at most 128 word/dot/colon/hyphen chars.',
+            ], 400);
         }
 
         $cacheKey = "idem:{$key}";

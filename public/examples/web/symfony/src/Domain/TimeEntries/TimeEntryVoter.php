@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\TimeEntries;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;

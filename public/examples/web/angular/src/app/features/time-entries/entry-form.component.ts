@@ -3,7 +3,7 @@
 // The form submits to the domain service, never to HttpClient directly.
 
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { form, FormField, min, required, submit } from '@angular/forms/signals';
+import { form, FormField, max, maxLength, min, required, submit } from '@angular/forms/signals';
 import { firstValueFrom } from 'rxjs';
 import { EntriesService } from './entries.service';
 import type { NewEntry } from './entry.model';
@@ -38,10 +38,12 @@ export class EntryForm {
   protected model = signal<NewEntry>({ task: '', minutes: 30 });
 
   // The schema function is the form's contract — same role as the
-  // backend's request validation, on the client side.
+  // backend's request validation, with the same bounds.
   protected entryForm = form(this.model, (p) => {
     required(p.task, { message: 'Task is required' });
+    maxLength(p.task, 255, { message: 'Task is too long' });
     min(p.minutes, 1, { message: 'At least 1 minute' });
+    max(p.minutes, 1440, { message: 'A day has 1440 minutes' });
   });
 
   onSubmit(event: Event) {

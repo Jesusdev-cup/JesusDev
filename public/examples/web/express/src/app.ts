@@ -4,10 +4,15 @@
 
 import express, { type NextFunction, type Request, type Response } from 'express';
 import { timeEntries } from './routes/time-entries';
+import { securityHeaders } from './middleware/security';
+import { rateLimit } from './middleware/rate-limit';
 
 export const app = express();
 
-app.use(express.json());
+app.disable('x-powered-by'); // don't advertise the stack
+app.use(securityHeaders());
+app.use(rateLimit(60)); // global budget: 60 req/min per IP+route
+app.use(express.json({ limit: '8kb' })); // bounded bodies only
 app.use('/api', timeEntries);
 
 // Health endpoint — every domain reports its own status too.
